@@ -37,4 +37,4 @@ TODO: Add screenshots and GIFs
 
 ## License
 
-Copyright (c) 2016 Alex Chepura and contributors. Released under an [MIT license](https://github.com/ractivejs/ractive/blob/master/LICENSE.md).
+Copyright (c) 2016 Alex Chepura and contributors. Released under an [MIT license](https://github.com/spiral-modules/image-cropper/blob/master/LICENSE).
