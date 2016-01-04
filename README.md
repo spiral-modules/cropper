@@ -1,9 +1,9 @@
-# Image Cropper widget
+# Image Cropper Widget
 Module provides ability to crop user image on client side and send to backend as file stream over ajax call.
 
 ## Usage Example
 
-At frontend (dark template required):
+At frontend (dark template required), simple add virtual tag to your form:
 
 ```html
 <dark:use bundle="spiral:cropper"/>
