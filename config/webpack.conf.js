@@ -12,9 +12,9 @@ module.exports = {
     },
     output: {
         filename: 'sf.crop.js',
-        library: 'SF.js.Crop',
+        library: 'sf.crop',
         libraryTarget: 'umd',
-        path: path.resolve(__dirname, '..', '.build/crop/')
+        path: path.resolve(__dirname, '..', 'resources/scripts/')
     },
     resolve: {
         alias: {
@@ -27,8 +27,6 @@ module.exports = {
     },
     module: {
         loaders: [
-            //{ test: /parchment\/src\/.*\.ts$/, loader: 'ts' },
-            //{test: /\.styl$/, loader: 'css!stylus'},
             {test: /(src|test)\/.*\.js$/, loader: 'babel?presets[]=es2015&plugins[]=transform-runtime'}
         ],
         noParse: [

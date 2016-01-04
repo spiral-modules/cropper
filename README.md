@@ -21,3 +21,20 @@ public function uploadAction()
 ```
 
 TODO: Add screenshots and GIFs
+
+
+## Local Development
+
+### Installation
+
+    npm install -g gulp
+    npm install
+
+### Building
+
+    gulp build - compile and browserify
+    
+
+## License
+
+Copyright (c) 2016 Alex Chepura and contributors. Released under an [MIT license](https://github.com/ractivejs/ractive/blob/master/LICENSE.md).
