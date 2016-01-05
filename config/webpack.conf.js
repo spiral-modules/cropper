@@ -12,7 +12,7 @@ module.exports = {
     },
     output: {
         filename: 'sf.crop.js',
-        library: 'sf.crop',
+        library: 'sCrop',
         libraryTarget: 'umd',
         path: path.resolve(__dirname, '..', 'resources/scripts/')
     },
