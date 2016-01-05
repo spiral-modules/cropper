@@ -12,9 +12,9 @@ module.exports = {
     },
     output: {
         filename: 'sf.crop.js',
-        library: 'sCrop',
+        //library: 'sCrop',
         libraryTarget: 'umd',
-        path: path.resolve(__dirname, '..', 'resources/scripts/')
+        path: path.resolve(__dirname, '..', 'resources/scripts/spiral/')
     },
     resolve: {
         alias: {
@@ -36,5 +36,10 @@ module.exports = {
         ]
     },
     plugins: [constantPack],
-    devtool: 'source-map'
+    devtool: 'source-map',
+    externals: {
+        // require("jquery") is external and available
+        //  on the global var jQuery
+        "sf": "sf"
+    }
 };

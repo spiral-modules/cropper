@@ -1,5 +1,5 @@
 /.build
-/resources
+#/resources
 /dist
 /lib
 /node_modules

@@ -1,18 +1,31 @@
 "use strict";
-var spiral = {};
+import sf from 'sf';//resolved in webpack's "externals"
+
+var Crop = function (sf, node, options) {
+    this._construct(sf, node, options);
+};
+
 /**
- * This a constructor (class) for file (only images) input with ability to crop it.
- * @param {Object} node dom node
- * @param {Object} options all options to override default
- * @constructor
- * @extends spiral.BaseDOMConstructor
+ * @lends sf.Form.prototype
  */
-spiral.Crop = function (node, options) {
+Crop.prototype = Object.create(sf.modules.core.BaseDOMConstructor.prototype);
+
+/**
+ * Name to register
+ * @type {string}
+ */
+Crop.prototype.name = "crop";
+
+Crop.prototype._construct = function (sf, node, options) {
+
+    this.init(sf, node, options);//call parent
+
     var that = this,
-        noop = function(){};
-    this.init(node);//call parent
+        noop = function () {
+        };
+
     if (options) {//if we pass options extend all options by passed options
-        this.options = spiral.tools.extend(this.options, options);
+        this.options = sf.tools.extend(this.options, options);
     }
 
     if (typeof this.options.showInfo == "string")
@@ -26,10 +39,10 @@ spiral.Crop = function (node, options) {
     this.els = {
         node: node,
         preview: document.getElementById(this.options.previewID),
-        input: node.getElementsByClassName("js-spiral-crop-input")[0],
+        input: node.getElementsByClassName("js-sf-crop-input")[0],
         modal: node.getElementsByClassName("modal")[0],
-        previewInternal: node.getElementsByClassName("js-spiral-crop-preview-internal")[0],
-        adjust: node.getElementsByClassName("js-spiral-crop-preview-adjust")[0],
+        previewInternal: node.getElementsByClassName("js-sf-crop-preview-internal")[0],
+        adjust: node.getElementsByClassName("js-sf-crop-preview-adjust")[0],
         cropWrapper: node.getElementsByClassName("crop-wrapper")[0],
         imageOriginal: node.getElementsByClassName("image-original")[0],
         cropElements: node.getElementsByClassName("crop-elements")[0],
@@ -60,7 +73,7 @@ spiral.Crop = function (node, options) {
     };
 
     this.els.form = this.els.input.querySelector("input").form;
-    this.form = spiral.instancesController.getInstance("form", this.els.form);
+    this.form = sf.instancesController.getInstance("form", this.els.form);
 
     this.reset();
     this.addEventListeners();
@@ -86,19 +99,13 @@ spiral.Crop = function (node, options) {
         this.els.cropElements.style.backgroundColor = "rgba(255,255,255,0.01";
 };
 
-/**
- *
- * @type {spiral.BaseDOMConstructor.prototype}
- * @lends spiral.Crop.prototype
- */
-spiral.Crop.prototype = Object.create(spiral.BaseDOMConstructor.prototype);
 
 /**
  * @override
  * @inheritDoc
  * @enum {string}
  */
-spiral.Crop.prototype.attributesToGrab = {
+Crop.prototype.attributesToGrab = {
     /**
      *  How to send: cropped or full size with coordinates to crop on server <b>Default: "cropped"</b> <i>Optional: "full"</i>
      */
@@ -151,7 +158,7 @@ spiral.Crop.prototype.attributesToGrab = {
         "key": "name"
     }
 };
-spiral.Crop.prototype.reset = function () {
+Crop.prototype.reset = function () {
     //Coordinates aNd Variables
     this.cnv = {
         cursor: {x: 0, y: 0},
@@ -166,7 +173,7 @@ spiral.Crop.prototype.reset = function () {
         },
         canvas: {w: 538, h: 0},
         orig: {},
-        preview: {w: 0,h: 0},
+        preview: {w: 0, h: 0},
         scale: 1
     };
     this.setTop(0);
@@ -182,8 +189,8 @@ spiral.Crop.prototype.reset = function () {
  * @param type {string}
  * @param value {string|number}
  */
-spiral.Crop.prototype.changeInfo = function (type, value) {
-    switch (type){
+Crop.prototype.changeInfo = function (type, value) {
+    switch (type) {
         case "ratio":
             this.els.cropInfo.ratio.innerHTML = "Aspect ratio: " + value;
             break;
@@ -194,14 +201,14 @@ spiral.Crop.prototype.changeInfo = function (type, value) {
 /**
  * Shows modal with cropper
  */
-spiral.Crop.prototype.showPopup = function () {
+Crop.prototype.showPopup = function () {
     if ($)
         $(this.els.modal).modal('show');
 };
 /**
  * Hides modal with cropper
  */
-spiral.Crop.prototype.hidePopup = function () {
+Crop.prototype.hidePopup = function () {
     if ($)
         $(this.els.modal).modal('hide');
 };
@@ -209,7 +216,7 @@ spiral.Crop.prototype.hidePopup = function () {
 /**
  * Adds events listeners.
  */
-spiral.Crop.prototype.addEventListeners = function () {
+Crop.prototype.addEventListeners = function () {
     var that = this;
 
     this.els.input.addEventListener('change', function (e) {
@@ -274,7 +281,7 @@ spiral.Crop.prototype.addEventListeners = function () {
  * Sets preview
  * @param img
  */
-spiral.Crop.prototype.setPreviewImage = function (img) {
+Crop.prototype.setPreviewImage = function (img) {
     var that = this;
     if (that.els.preview) {
 //        if (that.els.preview.lastChild) // Don't remember why was removing only last child
@@ -296,7 +303,7 @@ spiral.Crop.prototype.setPreviewImage = function (img) {
  * Reads file, selected by user
  * @param file
  */
-spiral.Crop.prototype.handleFileSelect = function (file) {
+Crop.prototype.handleFileSelect = function (file) {
     var that = this;
     this.reader = new FileReader();
     this.reset();
@@ -341,12 +348,13 @@ spiral.Crop.prototype.handleFileSelect = function (file) {
 /**
  * Prepares canvas, calculates coordinates
  */
-spiral.Crop.prototype.prepare = function () {
+Crop.prototype.prepare = function () {
     var that = this;
     var c = document.createElement("canvas");
     c.width = that.cnv.canvas.w;
     c.height = that.cnv.canvas.w / that.cnv.orig.ratio;
     var ctx = c.getContext("2d");
+
     function drawImageOnCanvas() {//fix to NS_ERROR_NOT_AVAILABLE in firefox with ctx.drawImage
         try {
             ctx.drawImage(that.img, 0, 0, that.cnv.canvas.w, that.cnv.canvas.w / that.cnv.orig.ratio);
@@ -358,6 +366,7 @@ spiral.Crop.prototype.prepare = function () {
             }
         }
     }
+
     drawImageOnCanvas();
     that.els.imageOriginal.appendChild(c);
     setTimeout(function () {
@@ -386,7 +395,7 @@ spiral.Crop.prototype.prepare = function () {
             }
 
             if (that.options.showInfo.length > 0) {
-                that.options.showInfo.forEach(function(info){
+                that.options.showInfo.forEach(function (info) {
                     if (info == "ratio") {
                         that.changeInfo("ratio", that.options.aspectRatio);
                     }
@@ -405,7 +414,7 @@ spiral.Crop.prototype.prepare = function () {
  * Processes crop start.
  * @param {Event} e
  */
-spiral.Crop.prototype.onCropStart = function (e) {
+Crop.prototype.onCropStart = function (e) {
     this.els.handlers.current = e.target;
     this.cnv.offset = this.els.cropWrapper.getBoundingClientRect();
     this.cnv.cursor.x = Math.round(e.clientX - this.cnv.offset.left);
@@ -418,7 +427,7 @@ spiral.Crop.prototype.onCropStart = function (e) {
  * Processes cropping (mouse move)
  * @param  {Event} e
  */
-spiral.Crop.prototype.onCrop = function (e) {
+Crop.prototype.onCrop = function (e) {
     if (!this.els.handlers.current) return;
     this.cnv.cursor.x = Math.round(e.clientX - this.cnv.offset.left);
     this.cnv.cursor.y = Math.round(e.clientY - this.cnv.offset.top);
@@ -457,14 +466,14 @@ spiral.Crop.prototype.onCrop = function (e) {
 /**
  * Process crop end.
  */
-spiral.Crop.prototype.onCropEnd = function () {
+Crop.prototype.onCropEnd = function () {
     this.els.handlers.current = null;
 };
 /**
  * Sets left side of cropper
  * @param x {number}
  */
-spiral.Crop.prototype.setLeft = function (x) {
+Crop.prototype.setLeft = function (x) {
     this.cnv.crop.x = x;
     this.els.cropElements.style.left = x + "px";
     this.els.dimmers.el.style.left = x + "px";
@@ -473,7 +482,7 @@ spiral.Crop.prototype.setLeft = function (x) {
  * Sets top side of cropper
  * @param y {number}
  */
-spiral.Crop.prototype.setTop = function (y) {
+Crop.prototype.setTop = function (y) {
     this.cnv.crop.y = y;
     this.els.cropElements.style.top = y + "px";
     this.els.dimmers.el.style.top = y + "px";
@@ -482,7 +491,7 @@ spiral.Crop.prototype.setTop = function (y) {
  * Sets width of cropper
  * @param w {number}
  */
-spiral.Crop.prototype.setWidth = function (w) {
+Crop.prototype.setWidth = function (w) {
     this.cnv.crop.w = w;
     this.els.cropElements.style.width = w + "px";
     this.els.dimmers.el.style.width = w + "px";
@@ -491,7 +500,7 @@ spiral.Crop.prototype.setWidth = function (w) {
  * Sets height of cropper
  * @param h {number}
  */
-spiral.Crop.prototype.setHeight = function (h) {
+Crop.prototype.setHeight = function (h) {
     this.cnv.crop.h = h;
     this.els.cropElements.style.height = h + "px";
     this.els.dimmers.el.style.height = h + "px";
@@ -502,7 +511,7 @@ spiral.Crop.prototype.setHeight = function (h) {
  * @param {boolean|undefined} notDefaultSide
  * @param {number} y
  */
-spiral.Crop.prototype.adjustN = function (notDefaultSide, y) {
+Crop.prototype.adjustN = function (notDefaultSide, y) {
     if (notDefaultSide) {
         if ((this.cnv.crop.y2 - y) * this.options.aspectRatio <= this.cnv.crop.x2) {
             this.setTop(y);
@@ -533,7 +542,7 @@ spiral.Crop.prototype.adjustN = function (notDefaultSide, y) {
  * Sets top coordinates and border.
  * @param {Boolean} [notDefaultSide]
  */
-spiral.Crop.prototype.setN = function (notDefaultSide) {
+Crop.prototype.setN = function (notDefaultSide) {
     if (this.options.aspectRatio) {
         if (this.cnv.cursor.y > 0) {
             if (this.cnv.cursor.y < this.cnv.crop.y2) {
@@ -572,7 +581,7 @@ spiral.Crop.prototype.setN = function (notDefaultSide) {
  * @param {boolean|undefined} notDefaultSide
  * @param {number} y2
  */
-spiral.Crop.prototype.adjustS = function (notDefaultSide, y2) {
+Crop.prototype.adjustS = function (notDefaultSide, y2) {
     if (notDefaultSide) {
         if ((y2 - this.cnv.crop.y) * this.options.aspectRatio <= this.cnv.crop.x2) {
             this.setHeight(y2 - this.cnv.crop.y);
@@ -604,7 +613,7 @@ spiral.Crop.prototype.adjustS = function (notDefaultSide, y2) {
  * Sets bottom coordinates and border.
  * @param {Boolean} [notDefaultSide]
  */
-spiral.Crop.prototype.setS = function (notDefaultSide) {
+Crop.prototype.setS = function (notDefaultSide) {
     if (this.options.aspectRatio) {
         if (this.cnv.cursor.y < this.cnv.image.h) {
             if (this.cnv.cursor.y > this.cnv.crop.y) {
@@ -643,7 +652,7 @@ spiral.Crop.prototype.setS = function (notDefaultSide) {
  * @param {boolean|undefined} notDefaultSide
  * @param {number} x
  */
-spiral.Crop.prototype.adjustW = function (notDefaultSide, x) {
+Crop.prototype.adjustW = function (notDefaultSide, x) {
     if (notDefaultSide) {
         if (this.cnv.crop.y2 - (this.cnv.crop.x2 - x) / this.options.aspectRatio >= 0) {
             this.setLeft(x);
@@ -675,7 +684,7 @@ spiral.Crop.prototype.adjustW = function (notDefaultSide, x) {
  * Sets left coordinates and border.
  * @param {Boolean} [notDefaultSide]
  */
-spiral.Crop.prototype.setW = function (notDefaultSide) {
+Crop.prototype.setW = function (notDefaultSide) {
     if (this.options.aspectRatio) {
         if (this.cnv.cursor.x > 0) {
             if (this.cnv.cursor.x < this.cnv.crop.x2) {
@@ -713,7 +722,7 @@ spiral.Crop.prototype.setW = function (notDefaultSide) {
  * @param {boolean|undefined} notDefaultSide
  * @param {number} x
  */
-spiral.Crop.prototype.adjustE = function (notDefaultSide, x) {
+Crop.prototype.adjustE = function (notDefaultSide, x) {
     if (notDefaultSide) {
         if (this.cnv.crop.y2 - (x - this.cnv.crop.x) / this.options.aspectRatio >= 0) {
             this.setWidth(x - this.cnv.crop.x);
@@ -745,7 +754,7 @@ spiral.Crop.prototype.adjustE = function (notDefaultSide, x) {
  * Sets right coordinates and border.
  * @param {Boolean} [notDefaultSide]
  */
-spiral.Crop.prototype.setE = function (notDefaultSide) {
+Crop.prototype.setE = function (notDefaultSide) {
     if (this.options.aspectRatio) {
         if (this.cnv.cursor.x < this.cnv.image.w) {
             if (this.cnv.cursor.x > this.cnv.crop.x) {
@@ -782,7 +791,7 @@ spiral.Crop.prototype.setE = function (notDefaultSide) {
 /**
  * Sets top-right corner.
  */
-spiral.Crop.prototype.setNE = function () {
+Crop.prototype.setNE = function () {
     if (this.options.aspectRatio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x2) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y) && this.cnv.cursor.x <= this.cnv.crop.x2) {
             this.setN();
@@ -798,7 +807,7 @@ spiral.Crop.prototype.setNE = function () {
 /**
  * Sets bottom-right corner.
  */
-spiral.Crop.prototype.setSE = function () {
+Crop.prototype.setSE = function () {
     if (this.options.aspectRatio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x2) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y - this.cnv.crop.h) && this.cnv.cursor.x <= this.cnv.crop.x2) {
             this.setS();
@@ -814,7 +823,7 @@ spiral.Crop.prototype.setSE = function () {
 /**
  * Sets bottom-left corner.
  */
-spiral.Crop.prototype.setSW = function () {
+Crop.prototype.setSW = function () {
     if (this.options.aspectRatio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y - this.cnv.crop.h) && this.cnv.cursor.x >= this.cnv.crop.x) {
             this.setS(true);
@@ -830,7 +839,7 @@ spiral.Crop.prototype.setSW = function () {
 /**
  * Sets top-left corner.
  */
-spiral.Crop.prototype.setNW = function () {
+Crop.prototype.setNW = function () {
     if (this.options.aspectRatio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y) && this.cnv.cursor.x >= this.cnv.crop.x) {
             this.setN(true);
@@ -846,7 +855,7 @@ spiral.Crop.prototype.setNW = function () {
 /**
  * Processes move crop selection.
  */
-spiral.Crop.prototype.move = function () {
+Crop.prototype.move = function () {
     var left = this.cnv.cursor.x - this.cnv.cursor.offsetX;
     var top = this.cnv.cursor.y - this.cnv.cursor.offsetY;
     if (left > 0) {
@@ -877,7 +886,7 @@ spiral.Crop.prototype.move = function () {
  * Deprecated.
  * Sets dimmers.
  */
-spiral.Crop.prototype.setDimmers = function () {
+Crop.prototype.setDimmers = function () {
     this.els.dimmers.n.style.top = this.cnv.crop.y - 1000 + "px";
     this.els.dimmers.n.style.left = this.cnv.crop.x + "px";
     this.els.dimmers.n.style.width = this.cnv.crop.w + "px";
@@ -897,7 +906,7 @@ spiral.Crop.prototype.setDimmers = function () {
  * @param dataURI
  * @returns {Blob}
  */
-spiral.Crop.prototype.dataURItoBlob = function (dataURI) {
+Crop.prototype.dataURItoBlob = function (dataURI) {
 
     var content = [],
         byteString,
@@ -921,7 +930,7 @@ spiral.Crop.prototype.dataURItoBlob = function (dataURI) {
 /**
  * Saves results to preview.
  */
-spiral.Crop.prototype.save = function () {
+Crop.prototype.save = function () {
     'use strict';
     var that = this;
     var c = document.createElement("canvas"),
@@ -948,6 +957,7 @@ spiral.Crop.prototype.save = function () {
             }
         }
     }
+
     drawImageOnCanvas();
     this.strDataURI = c.toDataURL("image/jpeg", 0.95);
 
@@ -961,7 +971,7 @@ spiral.Crop.prototype.save = function () {
 /**
  * Attaches data to formData
  */
-spiral.Crop.prototype.attachData = function () {
+Crop.prototype.attachData = function () {
     var that = this;
 
     if (this.form) {
@@ -981,11 +991,8 @@ spiral.Crop.prototype.attachData = function () {
     }
 };
 
-spiral.Crop.prototype.die = function () {
+Crop.prototype.die = function () {
     console.error("TODO DIE");//TODO DIE
 };
 
-//spiral.instancesController.addInstanceType("crop", "js-spiral-crop", spiral.Crop);
-
-var Crop = spiral.Crop;
 export { Crop as default };
