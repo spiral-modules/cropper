@@ -27,7 +27,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            {test: /(src|test)\/.*\.js$/, loader: 'babel?presets[]=es2015&plugins[]=transform-runtime'}
+            {test: /\.js?$/, loader: 'babel?presets[]=es2015&plugins[]=transform-runtime'}
         ],
         noParse: [
             ///\/node_modules\/clone\/clone\.js$/,
