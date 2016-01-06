@@ -106,6 +106,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	//resolved in webpack's "externals"
 	
+	var externals = { template: __webpack_require__(7) };
+	
 	var Crop = function Crop(sf, node, options) {
 	    this._construct(sf, node, options);
 	};
@@ -125,8 +127,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.init(sf, node, options); //call parent
 	
+	    //this.options.template = spiral.modules.helpers.tools.extend(externals, this.options.template || {});
+	    this.options.template = this.options.template || externals.template;
+	
 	    var that = this,
-	        noop = function noop() {};
+	        noop = function noop() {},
+	        parser = new DOMParser();
 	
 	    if (options) {
 	        //if we pass options extend all options by passed options
@@ -137,23 +143,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (this.options.aspectRatio) this.options.aspectRatio = parseFloat(this.options.aspectRatio); //just to be sure about number format, not string
 	    if (typeof this.options.onFileProcessed != "function") this.options.onFileProcessed = noop;
+	
+	    function createEl(tagName, className) {
+	        var el = document.createElement(tagName);
+	        if (className & className.length) el.classList.add(className);
+	        el.innerText = 'adjust crop';
+	        return el;
+	    }
+	
 	    //elements
 	    this.els = {
 	        node: node,
 	        preview: document.getElementById(this.options.previewID),
-	        input: node.getElementsByClassName("js-sf-crop-input")[0],
-	        modal: node.getElementsByClassName("modal")[0],
-	        previewInternal: node.getElementsByClassName("js-sf-crop-preview-internal")[0],
-	        adjust: node.getElementsByClassName("js-sf-crop-preview-adjust")[0],
-	        cropWrapper: node.getElementsByClassName("crop-wrapper")[0],
-	        imageOriginal: node.getElementsByClassName("image-original")[0],
-	        cropElements: node.getElementsByClassName("crop-elements")[0],
-	        cropSave: node.getElementsByClassName("crop-save")[0]
+	        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
+	        //previewInternal: this.options.template.getElementsByClassName("sf-crop-preview")[0], //preview cropped img todo (renamed from default) they will be not from template
+	        //adjust: this.options.template.getElementsByClassName("sf-crop-adjust")[0], //trigger to open cropper todo (renamed from default) they will be not from template
+	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
 	    };
+	    this.els.adjust = this.els.input.parentNode.appendChild(createEl('span', ''));
+	
+	    this.els.cropWrapper = this.els.modal.getElementsByClassName("sf-crop-wrapper")[0];
+	    this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
+	    this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
+	    this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
 	
 	    this.els.cropInfo = {
-	        ratio: node.getElementsByClassName("crop-ratio")[0]
+	        //ratio: this.options.template.getElementsByClassName("crop-ratio")[0]
 	    };
+	
 	    this.els.handlers = {
 	        n: this.els.modal.getElementsByClassName("handler-N")[0],
 	        ne: this.els.modal.getElementsByClassName("handler-NE")[0],
@@ -174,11 +191,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        w: this.els.modal.getElementsByClassName("dimmer-W")[0]
 	    };
 	
-	    this.els.form = this.els.input.querySelector("input").form;
-	    this.form = sf.instancesController.getInstance("form", this.els.form);
+	    //this.els.form = this.els.input.querySelector("input").form;
+	    //this.form = sf.instancesController.getInstance("form", this.els.form);
 	
 	    this.reset();
-	    this.addEventListeners();
+	    this.addEventListeners(); //todo divide listeners into 2 fns (one for popup and 2nd for input and visible els)
 	
 	    if (this.options.ajaximage) {
 	        this.els.input.remove();
@@ -219,6 +236,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "data-ajaximage": {
 	        "value": false,
 	        "key": "ajaximage"
+	    },
+	    "data-template": {
+	        "key": "template"
 	    },
 	    /**
 	     *  Request address for submitting (if there is no form) <b>Default: "false"</b> <i>Optional: request URL</i>
@@ -301,13 +321,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Shows modal with cropper
 	 */
 	Crop.prototype.showPopup = function () {
-	    if ($) $(this.els.modal).modal('show');
+	    //if ($)
+	    //    $(this.els.modal).modal('show');
+	    document.body.appendChild(this.els.modal);
+	    this.addEventListeners();
 	};
 	/**
 	 * Hides modal with cropper
 	 */
 	Crop.prototype.hidePopup = function () {
-	    if ($) $(this.els.modal).modal('hide');
+	    //if ($)
+	    //    $(this.els.modal).modal('hide');
+	    document.body.removeChild(this.els.modal);
+	    //todo do we need to remove listeners if there's no node anymore in dom
 	};
 	
 	/**
@@ -1096,14 +1122,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	module.exports = { "default": __webpack_require__(5), __esModule: true };
 
 /***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var $ = __webpack_require__(6);
-	module.exports = function create(P, D){
+	module.exports = function create(P, D) {
 	  return $.create(P, D);
 	};
 
@@ -1111,19 +1141,27 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports) {
 
+	"use strict";
+	
 	var $Object = Object;
 	module.exports = {
-	  create:     $Object.create,
-	  getProto:   $Object.getPrototypeOf,
-	  isEnum:     {}.propertyIsEnumerable,
-	  getDesc:    $Object.getOwnPropertyDescriptor,
-	  setDesc:    $Object.defineProperty,
-	  setDescs:   $Object.defineProperties,
-	  getKeys:    $Object.keys,
-	  getNames:   $Object.getOwnPropertyNames,
+	  create: $Object.create,
+	  getProto: $Object.getPrototypeOf,
+	  isEnum: ({}).propertyIsEnumerable,
+	  getDesc: $Object.getOwnPropertyDescriptor,
+	  setDesc: $Object.defineProperty,
+	  setDescs: $Object.defineProperties,
+	  getKeys: $Object.keys,
+	  getNames: $Object.getOwnPropertyNames,
 	  getSymbols: $Object.getOwnPropertySymbols,
-	  each:       [].forEach
+	  each: [].forEach
 	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"sf-crop-modal\">\r\n        <div class=\"modal-body\">\r\n            <div class=\"crop-info\">\r\n                <span class=\"crop-ratio\"></span>\r\n            </div>\r\n            <div class=\"crop-container\">\r\n                <div class=\"sf-crop-image-original\"></div>\r\n                <div class=\"sf-crop-wrapper\">\r\n                    <div class=\"dimmers-container\">\r\n                        <div class=\"dimmers\">\r\n                            <div class=\"dimmer dimmer-N\"></div>\r\n                            <div class=\"dimmer dimmer-E\"></div>\r\n                            <div class=\"dimmer dimmer-S\"></div>\r\n                            <div class=\"dimmer dimmer-W\"></div>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"sf-crop-elements\">\r\n                        <div class=\"handler handler-N\"></div>\r\n                        <div class=\"handler handler-NE\"></div>\r\n                        <div class=\"handler handler-E\"></div>\r\n                        <div class=\"handler handler-SE\"></div>\r\n                        <div class=\"handler handler-S\"></div>\r\n                        <div class=\"handler handler-SW\"></div>\r\n                        <div class=\"handler handler-W\"></div>\r\n                        <div class=\"handler handler-NW\"></div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-footer\">\r\n            <br>\r\n            <button type=\"button\" class=\"sf-crop-save\">Save changes</button>\r\n        </div>\r\n</div>\r\n";
 
 /***/ }
 /******/ ])

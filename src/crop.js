@@ -1,6 +1,8 @@
 "use strict";
 import sf from 'sf';//resolved in webpack's "externals"
 
+var externals = {template: require("html!./template.html")};
+
 var Crop = function (sf, node, options) {
     this._construct(sf, node, options);
 };
@@ -20,9 +22,13 @@ Crop.prototype._construct = function (sf, node, options) {
 
     this.init(sf, node, options);//call parent
 
+    //this.options.template = spiral.modules.helpers.tools.extend(externals, this.options.template || {});
+    this.options.template = this.options.template || externals.template;
+
     var that = this,
         noop = function () {
-        };
+        },
+        parser = new DOMParser();
 
     if (options) {//if we pass options extend all options by passed options
         this.options = sf.tools.extend(this.options, options);
@@ -35,23 +41,34 @@ Crop.prototype._construct = function (sf, node, options) {
         this.options.aspectRatio = parseFloat(this.options.aspectRatio);//just to be sure about number format, not string
     if (typeof this.options.onFileProcessed != "function")
         this.options.onFileProcessed = noop;
+
+    function createEl (tagName, className){
+        var el = document.createElement(tagName);
+        if(className & className.length) el.classList.add(className);
+        el.innerText='adjust crop';
+        return el;
+    }
+
     //elements
     this.els = {
         node: node,
         preview: document.getElementById(this.options.previewID),
-        input: node.getElementsByClassName("js-sf-crop-input")[0],
-        modal: node.getElementsByClassName("modal")[0],
-        previewInternal: node.getElementsByClassName("js-sf-crop-preview-internal")[0],
-        adjust: node.getElementsByClassName("js-sf-crop-preview-adjust")[0],
-        cropWrapper: node.getElementsByClassName("crop-wrapper")[0],
-        imageOriginal: node.getElementsByClassName("image-original")[0],
-        cropElements: node.getElementsByClassName("crop-elements")[0],
-        cropSave: node.getElementsByClassName("crop-save")[0]
+        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
+        //previewInternal: this.options.template.getElementsByClassName("sf-crop-preview")[0], //preview cropped img todo (renamed from default) they will be not from template
+        //adjust: this.options.template.getElementsByClassName("sf-crop-adjust")[0], //trigger to open cropper todo (renamed from default) they will be not from template
+        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
     };
+    this.els.adjust = this.els.input.parentNode.appendChild(createEl('span', '')); //todo replace with template
+
+    this.els.cropWrapper = this.els.modal.getElementsByClassName("sf-crop-wrapper")[0];
+    this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
+    this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
+    this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
 
     this.els.cropInfo = {
-        ratio: node.getElementsByClassName("crop-ratio")[0]
+        //ratio: this.options.template.getElementsByClassName("crop-ratio")[0]
     };
+
     this.els.handlers = {
         n: this.els.modal.getElementsByClassName("handler-N")[0],
         ne: this.els.modal.getElementsByClassName("handler-NE")[0],
@@ -72,11 +89,11 @@ Crop.prototype._construct = function (sf, node, options) {
         w: this.els.modal.getElementsByClassName("dimmer-W")[0]
     };
 
-    this.els.form = this.els.input.querySelector("input").form;
-    this.form = sf.instancesController.getInstance("form", this.els.form);
+    //this.els.form = this.els.input.querySelector("input").form;
+    //this.form = sf.instancesController.getInstance("form", this.els.form);
 
     this.reset();
-    this.addEventListeners();
+    this.addEventListeners(); //todo divide listeners into 2 fns (one for popup and 2nd for input and visible els)
 
     if (this.options.ajaximage) {
         this.els.input.remove();
@@ -119,6 +136,9 @@ Crop.prototype.attributesToGrab = {
     "data-ajaximage": {
         "value": false,
         "key": "ajaximage"
+    },
+    "data-template": {
+        "key": "template"
     },
     /**
      *  Request address for submitting (if there is no form) <b>Default: "false"</b> <i>Optional: request URL</i>
@@ -202,15 +222,19 @@ Crop.prototype.changeInfo = function (type, value) {
  * Shows modal with cropper
  */
 Crop.prototype.showPopup = function () {
-    if ($)
-        $(this.els.modal).modal('show');
+    //if ($)
+    //    $(this.els.modal).modal('show');
+    document.body.appendChild(this.els.modal);
+    this.addEventListeners();
 };
 /**
  * Hides modal with cropper
  */
 Crop.prototype.hidePopup = function () {
-    if ($)
-        $(this.els.modal).modal('hide');
+    //if ($)
+    //    $(this.els.modal).modal('hide');
+    document.body.removeChild(this.els.modal);
+    //todo do we need to remove listeners if there's no node anymore in dom
 };
 
 /**
