@@ -1,8 +1,10 @@
 "use strict";
 import sf from 'sf';//resolved in webpack's "externals"
 
-var externals = {template: require("html!./template.html")};
-
+var externals = {
+    template: require("html!./template.html"),
+    styles : require("style!css!less!./crop.less")
+};
 var Crop = function (sf, node, options) {
     this._construct(sf, node, options);
 };
@@ -22,7 +24,6 @@ Crop.prototype._construct = function (sf, node, options) {
 
     this.init(sf, node, options);//call parent
 
-    //this.options.template = spiral.modules.helpers.tools.extend(externals, this.options.template || {});
     this.options.template = this.options.template || externals.template;
 
     var that = this,
@@ -42,23 +43,19 @@ Crop.prototype._construct = function (sf, node, options) {
     if (typeof this.options.onFileProcessed != "function")
         this.options.onFileProcessed = noop;
 
-    function createEl (tagName, className){
-        var el = document.createElement(tagName);
-        if(className & className.length) el.classList.add(className);
-        el.innerText='adjust crop';
-        return el;
-    }
-
     //elements
     this.els = {
         node: node,
-        preview: document.getElementById(this.options.previewID),
         input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
-        //previewInternal: this.options.template.getElementsByClassName("sf-crop-preview")[0], //preview cropped img todo (renamed from default) they will be not from template
-        //adjust: this.options.template.getElementsByClassName("sf-crop-adjust")[0], //trigger to open cropper todo (renamed from default) they will be not from template
         modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
     };
-    this.els.adjust = this.els.input.parentNode.appendChild(createEl('span', '')); //todo replace with template
+
+    if (this.options.previewSelector) {this.els.preview = document.querySelector(this.options.previewSelector);} else {
+        console.warn('Provide image-preview selector with data-previewSelector');
+    }
+    if (this.options.adjustSelector) {this.els.adjust = document.querySelector(this.options.adjustSelector);} else{
+        console.warn('Provide adjust-crop selector with data-adjustSelector');
+    }
 
     this.els.cropWrapper = this.els.modal.getElementsByClassName("sf-crop-wrapper")[0];
     this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
@@ -104,7 +101,7 @@ Crop.prototype._construct = function (sf, node, options) {
                 var url = window.URL || window.webkitURL;
                 img.src = url.createObjectURL(this.response);
                 that.handleFileSelect(this.response);
-                that.els.adjust.style.display = 'inline-block';
+                if (that.els.adjust) that.els.adjust.style.display = 'inline-block';
             }
         };
         xhr.open('GET', that.options.ajaximage);
@@ -166,9 +163,16 @@ Crop.prototype.attributesToGrab = {
     /**
      *  ID of preview element <b>Default: ""</b>
      */
-    "data-previewID": {
+    "data-previewSelector": {
         "value": "",
-        "key": "previewID"
+        "key": "previewSelector"
+    },
+    /**
+     *  Selector of element which twiggers crop-modal <b>Default: ""</b>
+     */
+    "data-adjustSelector": {
+        "value": "",
+        "key": "adjustSelector"
     },
     /**
      *  Name for formData <b>Default: "cropped"</b>
@@ -179,7 +183,7 @@ Crop.prototype.attributesToGrab = {
     }
 };
 Crop.prototype.reset = function () {
-    //Coordinates aNd Variables
+    //Coordinates and Variables
     this.cnv = {
         cursor: {x: 0, y: 0},
         crop: {x: 0, y: 0, x2: 0, y2: 0, w: 0, h: 0},
@@ -222,10 +226,8 @@ Crop.prototype.changeInfo = function (type, value) {
  * Shows modal with cropper
  */
 Crop.prototype.showPopup = function () {
-    //if ($)
-    //    $(this.els.modal).modal('show');
     document.body.appendChild(this.els.modal);
-    this.addEventListeners();
+    this.addEventListeners(); //todo only listeners for popups
 };
 /**
  * Hides modal with cropper
@@ -233,7 +235,7 @@ Crop.prototype.showPopup = function () {
 Crop.prototype.hidePopup = function () {
     //if ($)
     //    $(this.els.modal).modal('hide');
-    document.body.removeChild(this.els.modal);
+    document.body.removeChild(this.els.modal); //todo fix error
     //todo do we need to remove listeners if there's no node anymore in dom
 };
 
@@ -251,7 +253,7 @@ Crop.prototype.addEventListeners = function () {
             return;
         }
         that.handleFileSelect(file);
-        that.els.adjust.style.display = 'inline-block';
+        if(that.els.adjust) that.els.adjust.style.display = 'inline-block';
     }, false);
 
     if (this.els.preview) {
@@ -260,26 +262,18 @@ Crop.prototype.addEventListeners = function () {
                 that.prepare();
             that.showPopup();
         }, false);
-    } else {
-        this.els.adjust.addEventListener('mouseenter', function () {
-            that.els.previewInternal.parentNode.style.display = 'block';
-        }, false);
-
-        this.els.adjust.addEventListener('mouseleave', function () {
-            that.els.previewInternal.parentNode.style.display = 'none';
+    }
+    if (this.els.adjust) {
+        this.els.adjust.addEventListener('click', function () {
+            if (that.readyToPrepare)
+                that.prepare();
+            that.showPopup();
         }, false);
     }
-
-    this.els.adjust.addEventListener('click', function () {
-        if (that.readyToPrepare)
-            that.prepare();
-        that.showPopup();
-    }, false);
-
-    //this.els.cropSave.addEventListener("click", function () {
-    //    that.save();
-    //    that.hidePopup();
-    //});
+    this.els.cropSave.addEventListener("click", function () {
+        that.save();
+        that.hidePopup();
+    });
 
     this.els.cropWrapper.addEventListener("mousedown", function (e) {
         that.onCropStart(e);
@@ -317,11 +311,7 @@ Crop.prototype.setPreviewImage = function (img) {
         newimg.style.maxWidth = "100%";
         that.els.preview.appendChild(newimg);
     }
-    if (that.els.previewInternal) {
-        if (that.els.previewInternal.lastChild)
-            that.els.previewInternal.removeChild(that.els.previewInternal.lastChild);
-        that.els.previewInternal.appendChild(img);
-    }
+
 };
 /**
  * Reads file, selected by user

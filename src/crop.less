@@ -1,58 +1,65 @@
-.btn-file {
-  position: relative;
-  overflow: hidden;
-}
+//.btn-file {
+//  position: relative;
+//  overflow: hidden;
+//}
+//
+//.btn-file input[type=file] {
+//  position: absolute;
+//  top: 0;
+//  right: 0;
+//  min-width: 100%;
+//  min-height: 100%;
+//  font-size: 999px;
+//  text-align: right;
+//  filter: alpha(opacity=0);
+//  opacity: 0;
+//  background: red;
+//  cursor: inherit;
+//  display: block;
+//}
+//
+//.form-crop-preview {
+//  cursor: pointer;
+//
+//  >img {
+//    max-width: 100%;
+//  }
+//}
 
-.btn-file input[type=file] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  min-width: 100%;
-  min-height: 100%;
-  font-size: 999px;
-  text-align: right;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  background: red;
-  cursor: inherit;
-  display: block;
-}
-
-.form-crop-preview {
-  cursor: pointer;
-
-  >img {
-    max-width: 100%;
-  }
-}
-
-.form-crop-group {
-  display: inline-block;
-
-  .pointer{
-    cursor: pointer;
-  }
-
-  .form-internal-crop-preview-container {
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
-    position: absolute;
-    background: white;
-    border-radius: 10px;
-    padding: 5px;
-    display: none;
-    z-index: 1;
-
-    img {
-      max-width: 200px;
-      max-height: 200px;
-      height: auto;
-      width: auto;
-    }
-  }
-}
+//.form-crop-group {
+//  display: inline-block;
+//
+//  .pointer{
+//    cursor: pointer;
+//  }
+//
+//  .form-internal-crop-preview-container {
+//    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+//    position: absolute;
+//    background: white;
+//    border-radius: 10px;
+//    padding: 5px;
+//    display: none;
+//    z-index: 1;
+//
+//    img {
+//      max-width: 200px;
+//      max-height: 200px;
+//      height: auto;
+//      width: auto;
+//    }
+//  }
+//}
 
 
 .modal.crop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px;
+  background-color: #FC9848;
+
+
   overflow: auto;
   width: auto;
   -webkit-touch-callout: none;
