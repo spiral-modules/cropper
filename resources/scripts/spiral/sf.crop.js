@@ -88,8 +88,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	//todo warn if there's no input type file
-	//todo attibutes to grab
+	//todo attributes to grab
+	//todo styles
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -153,7 +153,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
 	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
 	    };
-	
+	    console.log(this.els.input !== this.els.node);
 	    if (this.options.previewSelector) {
 	        this.els.preview = document.querySelector(this.options.previewSelector);
 	    } else {
@@ -164,7 +164,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	        console.warn('Provide adjust-crop selector with data-adjustSelector');
 	    }
-	
+	    console.log(this.els.input);
+	    if (!this.options.ajaximage && !this.els.input) {
+	        console.warn('Provide file-input to use cropper or load image with ajax (with data-ajaximage attr)');
+	    }
 	    this.els.cropWrapper = this.els.modal.getElementsByClassName("sf-crop-wrapper")[0];
 	    this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
 	    this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
@@ -201,7 +204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.addEventListeners();
 	
 	    if (this.options.ajaximage) {
-	        if (this.els.input) this.els.input.parentNode.removeChild(this.els.input);
+	        if (this.els.input && this.els.input !== this.els.node) this.els.input.parentNode.removeChild(this.els.input); //this check is for not to remove cropper's node and not to trigger die method
 	        var xhr = new XMLHttpRequest();
 	        xhr.onreadystatechange = function () {
 	            if (this.readyState == 4 && this.status == 200) {

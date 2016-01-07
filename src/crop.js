@@ -1,6 +1,8 @@
 "use strict";
-//todo warn if there's no input type file
-//todo attibutes to grab
+//todo update sf.js and attributes to grab
+//todo test with spiral form
+//todo styles
+//todo close btn
 import sf from 'sf';//resolved in webpack's "externals"
 
 var externals = {
@@ -59,6 +61,9 @@ Crop.prototype._construct = function (sf, node, options) {
         console.warn('Provide adjust-crop selector with data-adjustSelector');
     }
 
+    if (!this.options.ajaximage && !this.els.input) {
+        console.warn('Provide file-input to use cropper or load image with ajax (with data-ajaximage attr)');
+    }
     this.els.cropWrapper = this.els.modal.getElementsByClassName("sf-crop-wrapper")[0];
     this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
     this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
@@ -95,7 +100,7 @@ Crop.prototype._construct = function (sf, node, options) {
     this.addEventListeners();
 
     if (this.options.ajaximage) {
-        if (this.els.input) this.els.input.parentNode.removeChild(this.els.input);
+        if (this.els.input && this.els.input !== this.els.node) this.els.input.parentNode.removeChild(this.els.input); //this check is for not to remove cropper's node and not to trigger die method
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
