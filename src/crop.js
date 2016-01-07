@@ -1,4 +1,6 @@
 "use strict";
+//todo warn if there's no input type file
+//todo attibutes to grab
 import sf from 'sf';//resolved in webpack's "externals"
 
 var externals = {
@@ -86,14 +88,14 @@ Crop.prototype._construct = function (sf, node, options) {
         w: this.els.modal.getElementsByClassName("dimmer-W")[0]
     };
 
-    //this.els.form = this.els.input.querySelector("input").form;
-    //this.form = sf.instancesController.getInstance("form", this.els.form);
+    this.els.form = this.els.input ? this.els.input.form : '';
+    this.form = sf.instancesController.getInstance("form", this.els.form);
 
     this.reset();
-    this.addEventListeners(); //todo divide listeners into 2 fns (one for popup and 2nd for input and visible els)
+    this.addEventListeners();
 
     if (this.options.ajaximage) {
-        this.els.input.remove();
+        if (this.els.input) this.els.input.parentNode.removeChild(this.els.input);
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
@@ -227,34 +229,34 @@ Crop.prototype.changeInfo = function (type, value) {
  */
 Crop.prototype.showPopup = function () {
     document.body.appendChild(this.els.modal);
-    this.addEventListeners(); //todo only listeners for popups
+    this.addModalEventListeners();
 };
 /**
  * Hides modal with cropper
  */
 Crop.prototype.hidePopup = function () {
-    //if ($)
-    //    $(this.els.modal).modal('hide');
-    document.body.removeChild(this.els.modal); //todo fix error
-    //todo do we need to remove listeners if there's no node anymore in dom
+    this.els.modal.parentNode.removeChild(this.els.modal);
+    this.removeModalEventListeners();
 };
 
 /**
- * Adds events listeners.
+ * Adds static events listeners.
  */
 Crop.prototype.addEventListeners = function () {
     var that = this;
 
-    this.els.input.addEventListener('change', function (e) {
-        //IE9 doesn't support File API
-        var file = e.target.files[0];
-        if (!file.type.match(/image/)) {
-            alert("Please select an image.");
-            return;
-        }
-        that.handleFileSelect(file);
-        if(that.els.adjust) that.els.adjust.style.display = 'inline-block';
-    }, false);
+    if (this.els.input) {
+        this.els.input.addEventListener('change', function (e) {
+            //IE9 doesn't support File API
+            var file = e.target.files[0];
+            if (!file.type.match(/image/)) {
+                alert("Please select an image.");
+                return;
+            }
+            that.handleFileSelect(file);
+            if (that.els.adjust) that.els.adjust.style.display = 'inline-block';
+        }, false);
+    }
 
     if (this.els.preview) {
         this.els.preview.addEventListener('click', function () {
@@ -265,34 +267,61 @@ Crop.prototype.addEventListeners = function () {
     }
     if (this.els.adjust) {
         this.els.adjust.addEventListener('click', function () {
-            if (that.readyToPrepare)
-                that.prepare();
-            that.showPopup();
+            if (that.img) {
+                if (that.readyToPrepare)
+                    that.prepare();
+                that.showPopup();
+            }
         }, false);
+
     }
-    this.els.cropSave.addEventListener("click", function () {
+};
+/**
+ * Adds events listeners for modal.
+ */
+Crop.prototype.addModalEventListeners = function () {
+    var that = this;
+
+    this._cropSave = function(){
         that.save();
         that.hidePopup();
-    });
+    };
 
-    this.els.cropWrapper.addEventListener("mousedown", function (e) {
+    this._cropWrapperMouseDown = function(e){
         that.onCropStart(e);
         that.inCropping = true;
-    });
-    document.addEventListener("mousemove", function (e) {
+    };
+
+    this._documentMouseMove = function(e){
         if (that.inCropping) {
             e.preventDefault(); //prevent selecting background elements
             that.onCrop(e);
         }
-    });
-    this.els.cropWrapper.addEventListener("mouseup", function () {
+    };
+
+    this._cropWrapperMouseUp = function(){
         that.onCropEnd();
         that.inCropping = false;
-    });
-    document.addEventListener("mouseup", function () {
+    };
+
+    this._documentMouseUp = function(){
         that.onCropEnd();
         that.inCropping = false;
-    });
+    };
+
+    this.els.cropSave.addEventListener("click", this._cropSave);
+    this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
+    this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
+    document.addEventListener("mousemove", this._documentMouseMove);
+    document.addEventListener("mouseup", this._documentMouseUp);
+};
+
+Crop.prototype.removeModalEventListeners = function () {
+    this.els.cropSave.removeEventListener("click", this._cropSave);
+    this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
+    this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
+    document.removeEventListener("mousemove", this._documentMouseMove);
+    document.removeEventListener("mouseup", this._documentMouseUp);
 };
 
 /**
@@ -346,10 +375,6 @@ Crop.prototype.handleFileSelect = function (file) {
                 if (that.els.imageOriginal.lastChild)
                     that.els.imageOriginal.removeChild(that.els.imageOriginal.lastChild);
                 that.readyToPrepare = true;
-                //if (that.options.aspectRatio) {
-                //that.prepare();
-                //that.showPopup();
-                //}
                 that.options.onFileProcessed();
             };
 
