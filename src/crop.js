@@ -1,8 +1,7 @@
 "use strict";
-//todo update sf.js and attributes to grab
+//todo update sf.js and attributes to grab https://github.com/spiral/sf.js/commit/9753a4e0524220b77f417491c0993063496740b0
 //todo test with spiral form
 //todo styles
-//todo close btn
 import sf from 'sf';//resolved in webpack's "externals"
 
 var externals = {
@@ -68,6 +67,7 @@ Crop.prototype._construct = function (sf, node, options) {
     this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
     this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
     this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
+    this.els.closePopup = this.els.modal.getElementsByClassName("sf-crop-close")[0];
 
     this.els.cropInfo = {
         //ratio: this.options.template.getElementsByClassName("crop-ratio")[0]
@@ -106,9 +106,13 @@ Crop.prototype._construct = function (sf, node, options) {
             if (this.readyState == 4 && this.status == 200) {
                 var img = new Image();
                 var url = window.URL || window.webkitURL;
-                img.src = url.createObjectURL(this.response);
-                that.handleFileSelect(this.response);
-                if (that.els.adjust) that.els.adjust.style.display = 'inline-block';
+                if (this.response instanceof Blob) {
+                    img.src = url.createObjectURL(this.response);
+                    that.handleFileSelect(this.response);
+                    that.els.adjust.style.display = 'inline-block';
+                } else {
+                    that.els.adjust.parentNode.removeChild(that.els.adjust);
+                }
             }
         };
         xhr.open('GET', that.options.ajaximage);
@@ -292,6 +296,10 @@ Crop.prototype.addModalEventListeners = function () {
         that.hidePopup();
     };
 
+    this._hidePopup = function(){ //this fn to save correct "this" and to be able to remove listener later
+        that.hidePopup();
+    };
+
     this._cropWrapperMouseDown = function(e){
         that.onCropStart(e);
         that.inCropping = true;
@@ -313,7 +321,7 @@ Crop.prototype.addModalEventListeners = function () {
         that.onCropEnd();
         that.inCropping = false;
     };
-
+    this.els.closePopup.addEventListener("click", this._hidePopup);
     this.els.cropSave.addEventListener("click", this._cropSave);
     this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
     this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
@@ -322,6 +330,7 @@ Crop.prototype.addModalEventListeners = function () {
 };
 
 Crop.prototype.removeModalEventListeners = function () {
+    this.els.closePopup.removeEventListener("click", this._hidePopup);
     this.els.cropSave.removeEventListener("click", this._cropSave);
     this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
     this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);

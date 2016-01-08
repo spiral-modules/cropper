@@ -88,7 +88,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	//todo attributes to grab
+	//todo update sf.js and attributes to grab https://github.com/spiral/sf.js/commit/9753a4e0524220b77f417491c0993063496740b0
+	//todo test with spiral form
 	//todo styles
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -153,7 +154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
 	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
 	    };
-	    console.log(this.els.input !== this.els.node);
+	
 	    if (this.options.previewSelector) {
 	        this.els.preview = document.querySelector(this.options.previewSelector);
 	    } else {
@@ -164,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	        console.warn('Provide adjust-crop selector with data-adjustSelector');
 	    }
-	    console.log(this.els.input);
+	
 	    if (!this.options.ajaximage && !this.els.input) {
 	        console.warn('Provide file-input to use cropper or load image with ajax (with data-ajaximage attr)');
 	    }
@@ -172,6 +173,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
 	    this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
 	    this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
+	    this.els.closePopup = this.els.modal.getElementsByClassName("sf-crop-close")[0];
 	
 	    this.els.cropInfo = {
 	        //ratio: this.options.template.getElementsByClassName("crop-ratio")[0]
@@ -210,9 +212,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (this.readyState == 4 && this.status == 200) {
 	                var img = new Image();
 	                var url = window.URL || window.webkitURL;
-	                img.src = url.createObjectURL(this.response);
-	                that.handleFileSelect(this.response);
-	                if (that.els.adjust) that.els.adjust.style.display = 'inline-block';
+	                if (this.response instanceof Blob) {
+	                    img.src = url.createObjectURL(this.response);
+	                    that.handleFileSelect(this.response);
+	                    that.els.adjust.style.display = 'inline-block';
+	                } else {
+	                    that.els.adjust.parentNode.removeChild(that.els.adjust);
+	                }
 	            }
 	        };
 	        xhr.open('GET', that.options.ajaximage);
@@ -390,6 +396,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        that.hidePopup();
 	    };
 	
+	    this._hidePopup = function () {
+	        //this fn to save correct "this" and to be able to remove listener later
+	        that.hidePopup();
+	    };
+	
 	    this._cropWrapperMouseDown = function (e) {
 	        that.onCropStart(e);
 	        that.inCropping = true;
@@ -411,7 +422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        that.onCropEnd();
 	        that.inCropping = false;
 	    };
-	
+	    this.els.closePopup.addEventListener("click", this._hidePopup);
 	    this.els.cropSave.addEventListener("click", this._cropSave);
 	    this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
@@ -420,6 +431,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	Crop.prototype.removeModalEventListeners = function () {
+	    this.els.closePopup.removeEventListener("click", this._hidePopup);
 	    this.els.cropSave.removeEventListener("click", this._cropSave);
 	    this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
@@ -1182,7 +1194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"sf-crop-modal modal crop\">\r\n        <div class=\"modal-body\">\r\n            <div class=\"crop-info\">\r\n                <span class=\"crop-ratio\"></span>\r\n            </div>\r\n            <div class=\"crop-container\">\r\n                <div class=\"sf-crop-image-original\"></div>\r\n                <div class=\"sf-crop-wrapper crop-wrapper\">\r\n                    <div class=\"dimmers-container\">\r\n                        <div class=\"dimmers\">\r\n                            <div class=\"dimmer dimmer-N\"></div>\r\n                            <div class=\"dimmer dimmer-E\"></div>\r\n                            <div class=\"dimmer dimmer-S\"></div>\r\n                            <div class=\"dimmer dimmer-W\"></div>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"sf-crop-elements crop-elements\">\r\n                        <div class=\"handler handler-N\"></div>\r\n                        <div class=\"handler handler-NE\"></div>\r\n                        <div class=\"handler handler-E\"></div>\r\n                        <div class=\"handler handler-SE\"></div>\r\n                        <div class=\"handler handler-S\"></div>\r\n                        <div class=\"handler handler-SW\"></div>\r\n                        <div class=\"handler handler-W\"></div>\r\n                        <div class=\"handler handler-NW\"></div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-footer\">\r\n            <br>\r\n            <button type=\"button\" class=\"sf-crop-save\">Save changes</button>\r\n        </div>\r\n</div>\r\n";
+	module.exports = "<div class=\"sf-crop-modal modal crop\">\r\n    <div class=\"modal-header\">\r\n        <button class=\"close sf-crop-close\">×</button>\r\n    </div>\r\n        <div class=\"modal-body\">\r\n            <div class=\"crop-info\">\r\n                <span class=\"crop-ratio\"></span>\r\n            </div>\r\n            <div class=\"crop-container\">\r\n                <div class=\"sf-crop-image-original\"></div>\r\n                <div class=\"sf-crop-wrapper crop-wrapper\">\r\n                    <div class=\"dimmers-container\">\r\n                        <div class=\"dimmers\">\r\n                            <div class=\"dimmer dimmer-N\"></div>\r\n                            <div class=\"dimmer dimmer-E\"></div>\r\n                            <div class=\"dimmer dimmer-S\"></div>\r\n                            <div class=\"dimmer dimmer-W\"></div>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"sf-crop-elements crop-elements\">\r\n                        <div class=\"handler handler-N\"></div>\r\n                        <div class=\"handler handler-NE\"></div>\r\n                        <div class=\"handler handler-E\"></div>\r\n                        <div class=\"handler handler-SE\"></div>\r\n                        <div class=\"handler handler-S\"></div>\r\n                        <div class=\"handler handler-SW\"></div>\r\n                        <div class=\"handler handler-W\"></div>\r\n                        <div class=\"handler handler-NW\"></div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-footer\">\r\n            <br>\r\n            <button type=\"button\" class=\"sf-crop-save btn\">Save changes</button>\r\n        </div>\r\n</div>\r\n";
 
 /***/ },
 /* 8 */
@@ -1219,7 +1231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".modal.crop {\n  position: fixed;\n  left: 0;\n  top: 0;\n  padding: 20px;\n  background-color: #FC9848;\n  overflow: auto;\n  width: auto;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.modal.crop .crop-container {\n  position: relative;\n}\n.modal.crop .image-original {\n  font-size: 50px;\n}\n.modal.crop .crop-wrapper {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n}\n.modal.crop .crop-wrapper .thumb {\n  max-width: 100%;\n  max-height: 100%;\n}\n.modal.crop .crop-wrapper .thumb > img {\n  max-width: 100%;\n  max-height: 100%;\n  position: relative;\n  visibility: hidden;\n  z-index: -1;\n  width: 100%;\n  min-width: 100%;\n  margin-bottom: -4px;\n}\n.modal.crop .crop-wrapper .transparent-image {\n  max-width: 100%;\n  max-height: 100%;\n}\n.modal.crop .crop-wrapper .crop-elements {\n  position: absolute;\n  border: 1px dashed black;\n  top: 0;\n  width: 100%;\n  height: 100%;\n  max-width: 100%;\n  max-height: 100%;\n  cursor: move;\n}\n.modal.crop .crop-wrapper .dimmers-container {\n  position: absolute;\n  overflow: hidden;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n}\n.modal.crop .crop-wrapper .dimmers {\n  position: absolute;\n}\n.modal.crop .crop-wrapper .dimmer {\n  position: absolute;\n  width: 1000px;\n  height: 1000px;\n  background-color: black;\n  opacity: 0.3;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-N {\n  bottom: 100%;\n  left: 0;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-E {\n  left: 100%;\n  top: 0;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-S {\n  top: 100%;\n  right: 0;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-W {\n  bottom: 0;\n  right: 100%;\n}\n.modal.crop .crop-wrapper .handler {\n  position: absolute;\n  border: 1px solid #333;\n  width: 10px;\n  height: 10px;\n  background: #FFF;\n  opacity: 0.5;\n}\n.modal.crop .crop-wrapper .handler.handler-N {\n  top: 0;\n  left: 50%;\n  margin-top: -6px;\n  margin-left: -6px;\n  cursor: n-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-NE {\n  top: 0;\n  right: 0;\n  margin-top: -6px;\n  margin-right: -6px;\n  cursor: ne-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-E {\n  top: 50%;\n  right: 0;\n  margin-top: -6px;\n  margin-right: -6px;\n  cursor: e-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-SE {\n  bottom: 0;\n  right: 0;\n  margin-bottom: -6px;\n  margin-right: -6px;\n  cursor: se-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-S {\n  bottom: 0;\n  left: 50%;\n  margin-bottom: -6px;\n  margin-left: -6px;\n  cursor: s-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-SW {\n  bottom: 0;\n  left: 0;\n  margin-bottom: -6px;\n  margin-left: -6px;\n  cursor: sw-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-W {\n  top: 50%;\n  left: 0;\n  margin-top: -6px;\n  margin-left: -6px;\n  cursor: w-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-NW {\n  top: 0;\n  left: 0;\n  margin-top: -6px;\n  margin-left: -6px;\n  cursor: nw-resize;\n}\n.modal.crop .crop-save {\n  width: 100%;\n}\n.modal.crop .change-orientation {\n  position: relative;\n  top: -15px;\n}\n.modal.crop .modal-header .close {\n  position: absolute;\n  right: 15px;\n  top: 15px;\n  text-decoration: none;\n  color: #e07251;\n}\n", ""]);
+	exports.push([module.id, ".modal.crop {\n  position: fixed;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  padding: 20px;\n  background-color: #FFFFFF;\n  box-shadow: 0 0 3px black;\n  overflow: auto;\n  width: auto;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.modal.crop .btn {\n  display: block;\n  margin: 0 auto;\n  padding: 7px 22px;\n  border-width: 0;\n  border-radius: 2px;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);\n  background-color: #468EBE;\n  color: #ecf0f1;\n  transition: background-color 0.3s;\n}\n.modal.crop .btn:hover,\n.modal.crop .btn:focus {\n  background-color: #2778AE;\n}\n.modal.crop .crop-container {\n  position: relative;\n}\n.modal.crop .image-original {\n  font-size: 50px;\n}\n.modal.crop .crop-wrapper {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n}\n.modal.crop .crop-wrapper .thumb {\n  max-width: 100%;\n  max-height: 100%;\n}\n.modal.crop .crop-wrapper .thumb > img {\n  max-width: 100%;\n  max-height: 100%;\n  position: relative;\n  visibility: hidden;\n  z-index: -1;\n  width: 100%;\n  min-width: 100%;\n  margin-bottom: -4px;\n}\n.modal.crop .crop-wrapper .transparent-image {\n  max-width: 100%;\n  max-height: 100%;\n}\n.modal.crop .crop-wrapper .crop-elements {\n  position: absolute;\n  border: 1px dashed black;\n  top: 0;\n  width: 100%;\n  height: 100%;\n  max-width: 100%;\n  max-height: 100%;\n  cursor: move;\n}\n.modal.crop .crop-wrapper .dimmers-container {\n  position: absolute;\n  overflow: hidden;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n}\n.modal.crop .crop-wrapper .dimmers {\n  position: absolute;\n}\n.modal.crop .crop-wrapper .dimmer {\n  position: absolute;\n  width: 1000px;\n  height: 1000px;\n  background-color: black;\n  opacity: 0.3;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-N {\n  bottom: 100%;\n  left: 0;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-E {\n  left: 100%;\n  top: 0;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-S {\n  top: 100%;\n  right: 0;\n}\n.modal.crop .crop-wrapper .dimmer.dimmer-W {\n  bottom: 0;\n  right: 100%;\n}\n.modal.crop .crop-wrapper .handler {\n  position: absolute;\n  border: 1px solid #333;\n  width: 10px;\n  height: 10px;\n  background: #FFF;\n  opacity: 0.5;\n}\n.modal.crop .crop-wrapper .handler.handler-N {\n  top: 0;\n  left: 50%;\n  margin-top: -6px;\n  margin-left: -6px;\n  cursor: n-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-NE {\n  top: 0;\n  right: 0;\n  margin-top: -6px;\n  margin-right: -6px;\n  cursor: ne-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-E {\n  top: 50%;\n  right: 0;\n  margin-top: -6px;\n  margin-right: -6px;\n  cursor: e-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-SE {\n  bottom: 0;\n  right: 0;\n  margin-bottom: -6px;\n  margin-right: -6px;\n  cursor: se-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-S {\n  bottom: 0;\n  left: 50%;\n  margin-bottom: -6px;\n  margin-left: -6px;\n  cursor: s-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-SW {\n  bottom: 0;\n  left: 0;\n  margin-bottom: -6px;\n  margin-left: -6px;\n  cursor: sw-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-W {\n  top: 50%;\n  left: 0;\n  margin-top: -6px;\n  margin-left: -6px;\n  cursor: w-resize;\n}\n.modal.crop .crop-wrapper .handler.handler-NW {\n  top: 0;\n  left: 0;\n  margin-top: -6px;\n  margin-left: -6px;\n  cursor: nw-resize;\n}\n.modal.crop .crop-save {\n  width: 100%;\n}\n.modal.crop .change-orientation {\n  position: relative;\n  top: -15px;\n}\n.modal.crop .modal-header {\n  margin-bottom: 20px;\n}\n.modal.crop .modal-header .close {\n  position: absolute;\n  background: transparent;\n  padding: 0;\n  top: 10px;\n  right: 15px;\n  font-size: 24px;\n  border: none;\n  opacity: 0.2;\n  cursor: pointer;\n}\n.modal.crop .modal-header .close:hover {\n  opacity: 1;\n}\n", ""]);
 	
 	// exports
 

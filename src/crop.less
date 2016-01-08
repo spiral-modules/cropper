@@ -1,65 +1,11 @@
-//.btn-file {
-//  position: relative;
-//  overflow: hidden;
-//}
-//
-//.btn-file input[type=file] {
-//  position: absolute;
-//  top: 0;
-//  right: 0;
-//  min-width: 100%;
-//  min-height: 100%;
-//  font-size: 999px;
-//  text-align: right;
-//  filter: alpha(opacity=0);
-//  opacity: 0;
-//  background: red;
-//  cursor: inherit;
-//  display: block;
-//}
-//
-//.form-crop-preview {
-//  cursor: pointer;
-//
-//  >img {
-//    max-width: 100%;
-//  }
-//}
-
-//.form-crop-group {
-//  display: inline-block;
-//
-//  .pointer{
-//    cursor: pointer;
-//  }
-//
-//  .form-internal-crop-preview-container {
-//    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
-//    position: absolute;
-//    background: white;
-//    border-radius: 10px;
-//    padding: 5px;
-//    display: none;
-//    z-index: 1;
-//
-//    img {
-//      max-width: 200px;
-//      max-height: 200px;
-//      height: auto;
-//      width: auto;
-//    }
-//  }
-//}
-
-
 .modal.crop {
   position: fixed;
-  left: 0;
-  top: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   padding: 20px;
-  background-color: #FC9848;
-
-
+  background-color: #FFFFFF;
+  box-shadow: 0 0 3px black;
   overflow: auto;
   width: auto;
   -webkit-touch-callout: none;
@@ -67,6 +13,20 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  .btn {
+    display: block;
+    margin: 0 auto;
+    padding: 7px 22px;
+    border-width: 0;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    background-color: #468EBE;
+    color: #ecf0f1;
+    transition: background-color 0.3s;
+    &:hover, &:focus {
+      background-color: #2778AE;
+    }
+  }
 
   .crop-container {
     position: relative;
@@ -243,12 +203,20 @@
   }
 
   .modal-header{
+    margin-bottom: 20px;
     .close{
       position: absolute;
+      background: transparent;
+      padding: 0;
+      top: 10px;
       right: 15px;
-      top: 15px;
-      text-decoration: none;
-      color: #e07251;
+      font-size: 24px;
+      border: none;
+      opacity: 0.2;
+      cursor: pointer;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
