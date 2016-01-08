@@ -1,6 +1,5 @@
 "use strict";
-//todo test with spiral form
-//todo aspectratio strange behaviour
+
 import sf from 'sf';//resolved in webpack's "externals"
 
 var externals = {
@@ -97,6 +96,7 @@ Crop.prototype._construct = function (sf, node, options) {
 
     this.reset();
     this.addEventListeners();
+    this.attachData();
 
     if (this.options.ajaximage) {
         if (this.els.input && this.els.input !== this.els.node) this.els.input.parentNode.removeChild(this.els.input); //this check is for not to remove cropper's node and not to trigger die method
@@ -108,7 +108,7 @@ Crop.prototype._construct = function (sf, node, options) {
                 if (this.response instanceof Blob) {
                     img.src = url.createObjectURL(this.response);
                     that.handleFileSelect(this.response);
-                    that.els.adjust.style.display = 'inline-block';
+                    //that.els.adjust.style.display = 'inline-block';
                 } else {
                     that.els.adjust.parentNode.removeChild(that.els.adjust);
                 }
@@ -381,7 +381,7 @@ Crop.prototype.handleFileSelect = function (file) {
             that.file = {
                 file: theFile,
                 blob: theFile,
-                name: encodeURIComponent(theFile.name),
+                name: encodeURIComponent(theFile.name ? theFile.name : that.options.ajaximage.replace(/^.*[\\\/]/, '')),
                 base64: e.target.result
             };
             that.img = new Image();
@@ -393,11 +393,11 @@ Crop.prototype.handleFileSelect = function (file) {
                 that.cnv.orig.h = that.img.naturalHeight;
                 that.cnv.orig.w = that.img.naturalWidth;
                 that.cnv.orig.ratio = that.cnv.orig.w / that.cnv.orig.h;
-                if (that.cnv.orig.ratio < 1)  that.cnv.canvas.w = 538 * that.cnv.orig.ratio; // if image is too narrow -> correct canvas sizes not to exceed display sizes
+                if (that.cnv.orig.ratio < 1)  that.cnv.canvas.w *=  that.cnv.orig.ratio; // if image is too narrow -> correct canvas sizes not to exceed display sizes
                 that.cnv.scale = that.cnv.orig.w / that.cnv.canvas.w;
                 that.cnv.toSave.w = that.cnv.orig.w;
                 that.cnv.toSave.h = that.cnv.orig.h;
-                that.attachData();
+
 
                 if (that.els.imageOriginal.lastChild)
                     that.els.imageOriginal.removeChild(that.els.imageOriginal.lastChild);
@@ -1039,19 +1039,19 @@ Crop.prototype.save = function () {
  */
 Crop.prototype.attachData = function () {
     var that = this;
-
     if (this.form) {
         if (this.options.sendFormat == "cropped") {
-            this.form.events.registerAction("beforeSubmit", function (options) {
+            this.form.events.on("onBeforeSend", function(options){
                 options.data.append(that.options.name, that.file.blob, that.file.name);
             });
         } else {
-            this.form.events.registerAction("beforeSubmit", function (options) {
-                options.data.append(that.options.name, that.file.file);
-                options.data.append("cropWidth", that.cnv.toSave.w);
-                options.data.append("cropHeight", that.cnv.toSave.h);
-                options.data.append("cropX", that.cnv.toSave.x);
-                options.data.append("cropY", that.cnv.toSave.y);
+
+            this.form.events.on("onBeforeSend", function (options) {
+                options.data.append(that.options.name, that.file.file, that.file.name);
+                options.data.append(that.options.name + "-cropData[cropWidth]", that.cnv.toSave.w);
+                options.data.append(that.options.name + "-cropData[cropHeight]", that.cnv.toSave.h);
+                options.data.append(that.options.name + "-cropData[cropX]", that.cnv.toSave.x);
+                options.data.append(that.options.name + "-cropData[cropY]", that.cnv.toSave.y);
             });
         }
     }

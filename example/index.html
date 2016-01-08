@@ -7,12 +7,17 @@
     <script src="../resources/scripts/spiral/sf.crop.js"></script>
 </head>
 <body>
+<h1>Crop example</h1>
+<div style="margin-bottom: 20px;">
+    <form class="js-sf-form" action="action.php" data-headers='{}'>
+        <input type="file" data-name="test" class="js-sf-crop" data-sendFormat="full" data-adjustSelector=".crop-adjust"
+               data-previewSelector=".crop-preview" data-ajaximage="image.jpg"/>
+        <input type="submit" value="submit"/>
+    </form>
+</div>
 
 
-<input type="file" class="js-sf-crop" data-aspectratio="1" data-adjustSelector=".crop-adjust" data-previewSelector=".crop-preview"
-data-ajaximage="image.jpg">
-<div class="crop-preview"></div>
-<div class="crop-adjust">Adjust cropping</div>
-
+<div class="crop-preview" style="max-width: 400px;"></div>
+<button class="crop-adjust" style="margin-top: 15px;">Adjust cropping</button>
 </body>
 </html>
