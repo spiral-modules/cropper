@@ -90,7 +90,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	//todo update sf.js and attributes to grab https://github.com/spiral/sf.js/commit/9753a4e0524220b77f417491c0993063496740b0
 	//todo test with spiral form
-	//todo styles
+	//todo 247 error
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -342,6 +342,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Crop.prototype.showPopup = function () {
 	    document.body.appendChild(this.els.modal);
 	    this.addModalEventListeners();
+	    this.removeEventListeners();
 	};
 	/**
 	 * Hides modal with cropper
@@ -349,6 +350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Crop.prototype.hidePopup = function () {
 	    this.els.modal.parentNode.removeChild(this.els.modal);
 	    this.removeModalEventListeners();
+	    this.addEventListeners();
 	};
 	
 	/**
@@ -357,38 +359,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	Crop.prototype.addEventListeners = function () {
 	    var that = this;
 	
-	    if (this.els.input) {
-	        this.els.input.addEventListener('change', function (e) {
-	            //IE9 doesn't support File API
-	            var file = e.target.files[0];
-	            if (!file.type.match(/image/)) {
-	                alert("Please select an image.");
-	                return;
-	            }
-	            that.handleFileSelect(file);
-	            if (that.els.adjust) that.els.adjust.style.display = 'inline-block';
-	        }, false);
-	    }
+	    this._inputChange = function (e) {
+	        //IE9 doesn't support File API
+	        var file = e.target.files[0];
+	        if (!file.type.match(/image/)) {
+	            alert("Please select an image.");
+	            return;
+	        }
+	        that.handleFileSelect(file);
+	        if (that.els.adjust) that.els.adjust.style.display = 'inline-block';
+	    };
 	
-	    if (this.els.preview) {
-	        this.els.preview.addEventListener('click', function () {
+	    this._openCropper = function (e) {
+	        if (that.img) {
 	            if (that.readyToPrepare) that.prepare();
 	            that.showPopup();
-	        }, false);
+	        }
+	    };
+	
+	    if (this.els.input) {
+	        this.els.input.addEventListener('change', this._inputChange);
+	    }
+	    if (this.els.preview) {
+	        this.els.preview.addEventListener('click', this._openCropper);
 	    }
 	    if (this.els.adjust) {
-	        this.els.adjust.addEventListener('click', function () {
-	            if (that.img) {
-	                if (that.readyToPrepare) that.prepare();
-	                that.showPopup();
-	            }
-	        }, false);
+	        this.els.adjust.addEventListener('click', this._openCropper);
 	    }
 	};
+	
+	Crop.prototype.removeEventListeners = function () {
+	    if (this.els.input) {
+	        this.els.input.removeEventListener('change', this._inputChange);
+	    }
+	    if (this.els.preview) {
+	        this.els.preview.removeEventListener('click', this._openCropper);
+	    }
+	    if (this.els.adjust) {
+	        this.els.adjust.removeEventListener('click', this._openCropper);
+	    }
+	};
+	
 	/**
 	 * Adds events listeners for modal.
 	 */
 	Crop.prototype.addModalEventListeners = function () {
+	    console.log('addmodallisteners');
 	    var that = this;
 	
 	    this._cropSave = function () {
@@ -481,6 +497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that.cnv.orig.h = that.img.naturalHeight;
 	                that.cnv.orig.w = that.img.naturalWidth;
 	                that.cnv.orig.ratio = that.cnv.orig.w / that.cnv.orig.h;
+	                if (that.cnv.orig.ratio < 1) that.cnv.canvas.w = 538 * that.cnv.orig.ratio; // if image is too narrow -> correct canvas sizes not to exceed display sizes
 	                that.cnv.scale = that.cnv.orig.w / that.cnv.canvas.w;
 	                that.cnv.toSave.w = that.cnv.orig.w;
 	                that.cnv.toSave.h = that.cnv.orig.h;
