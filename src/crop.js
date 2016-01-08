@@ -67,7 +67,9 @@ Crop.prototype._construct = function (sf, node, options) {
     this.els.closePopup = this.els.modal.getElementsByClassName("sf-crop-close")[0];
 
     this.els.cropInfo = {
-        //ratio: this.options.template.getElementsByClassName("crop-ratio")[0]
+        ratio: this.els.modal.getElementsByClassName("sf-crop-ratio")[0],
+        croppedSize: this.els.modal.getElementsByClassName("sf-crop-cropped-size")[0],
+        origSize: this.els.modal.getElementsByClassName("sf-crop-orig-size")[0]
     };
 
     this.els.handlers = {
@@ -162,7 +164,7 @@ Crop.prototype.optionsToGrab  = {
     },
     /**
      *  What info to show <b>Default: []</b></br>
-     *  <b>Example: </b>data-showInfo="ratio,origSize,croppedSIze"</br>
+     *  <b>Example: </b>data-showInfo="ratio,origSize,croppedSize"</br>
      *  <b>Note: </b>done only ratio
      */
     "showInfo": {
@@ -227,8 +229,28 @@ Crop.prototype.changeInfo = function (type, value) {
         case "ratio":
             this.els.cropInfo.ratio.innerHTML = "Aspect ratio: " + value;
             break;
+        case "croppedSize":
+            this.els.cropInfo.croppedSize.innerHTML = "Cropped size: " + value[0]+'x'+value[1];
+            break;
+        case "origSize":
+            this.els.cropInfo.origSize.innerHTML = "Original size: " + value[0]+'x'+value[1];
+            break;
         default:
             break;
+    }
+};
+/**
+ * Update cropping info.
+ */
+Crop.prototype.updateInfo = function () {
+    var that = this;
+    if (this.options.showInfo.length > 0) {
+        this.options.showInfo.forEach(function (info) {
+            if (info == "ratio")
+                that.changeInfo("ratio", Math.round(that.cnv.crop.w / that.cnv.crop.h * 100) / 100);
+            if (info == "croppedSize")
+                that.changeInfo("croppedSize", [Math.round(that.cnv.crop.w * that.cnv.scale), Math.round(that.cnv.crop.h * that.cnv.scale)]);
+        });
     }
 };
 /**
@@ -459,18 +481,13 @@ Crop.prototype.prepare = function () {
                 that.cnv.crop.y2 = that.cnv.crop.y + that.cnv.crop.h;
             }
 
-            if (that.options.showInfo.length > 0) {
-                that.options.showInfo.forEach(function (info) {
-                    if (info == "ratio") {
-                        that.changeInfo("ratio", that.options.aspectRatio);
-                    }
-                });
-            }
-
             that.save();
         }
+        that.updateInfo();
+        if (that.options.showInfo.indexOf("origSize") > -1) {
+            that.changeInfo("origSize", [that.cnv.orig.w, that.cnv.orig.h]); //no need to pass through updateInfo since it's static
+        }
 
-//        that.setDimmers();
         that.readyToPrepare = false;
     }, 50);
 };
@@ -525,6 +542,7 @@ Crop.prototype.onCrop = function (e) {
             this.move();
             break;
     }
+    this.updateInfo();
 //    this.setDimmers();
 };
 
