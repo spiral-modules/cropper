@@ -2,7 +2,7 @@
 header('Content-type: application/json');
 $response = [
     'status' => 200,
-    'message' => 'common answer goes here',
+    'message' => 'Successfully sent',
 ];
 
 echo json_encode($response);

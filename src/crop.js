@@ -3,8 +3,7 @@
 import sf from 'sf';//resolved in webpack's "externals"
 
 var externals = {
-    template: require("html!./template.html"),
-    styles : require("style!css!less!./crop.less")
+    template: require("html!./template.html")
 };
 var Crop = function (sf, node, options) {
     this._construct(sf, node, options);
