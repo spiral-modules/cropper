@@ -90,7 +90,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	//todo update sf.js and attributes to grab https://github.com/spiral/sf.js/commit/9753a4e0524220b77f417491c0993063496740b0
 	//todo test with spiral form
-	//todo 247 error
+	//todo aspectradio
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -234,67 +234,67 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @inheritDoc
 	 * @enum {string}
 	 */
-	Crop.prototype.attributesToGrab = {
+	Crop.prototype.optionsToGrab = {
 	    /**
 	     *  How to send: cropped or full size with coordinates to crop on server <b>Default: "cropped"</b> <i>Optional: "full"</i>
 	     */
-	    "data-sendFormat": {
+	    "sendFormat": {
 	        "value": "cropped",
-	        "key": "sendFormat"
+	        "domAttr": "data-sendFormat"
 	    },
 	    /**
 	     *  Preloading of image  <b>Default: "false"</b> <i>Optional: url of image to preload</i>
 	     */
-	    "data-ajaximage": {
+	    "ajaximage": {
 	        "value": false,
-	        "key": "ajaximage"
+	        "domAttr": "data-ajaximage"
 	    },
-	    "data-template": {
-	        "key": "template"
+	    "template": {
+	        "domAttr": "data-template"
 	    },
 	    /**
 	     *  Request address for submitting (if there is no form) <b>Default: "false"</b> <i>Optional: request URL</i>
 	     */
-	    "data-ajaxAddress": {
+	    "ajaxAddress": {
 	        "value": false,
-	        "key": "ajaxAddress"
+	        "domAttr": "data-ajaxAddress"
 	    },
 	    /**
 	     *  Locked aspect ratio <b>Default: false</b>
 	     */
-	    "data-aspectRatio": {
+	    "aspectRatio": {
 	        "value": false,
-	        "key": "aspectRatio"
+	        "domAttr": "data-aspectRatio"
 	    },
 	    /**
 	     *  What info to show <b>Default: []</b></br>
 	     *  <b>Example: </b>data-showInfo="ratio,origSize,croppedSIze"</br>
 	     *  <b>Note: </b>done only ratio
 	     */
-	    "data-showInfo": {
+	    "showInfo": {
 	        "value": [],
-	        "key": "showInfo"
+	        "domAttr": "data-showInfo"
 	    },
 	    /**
 	     *  ID of preview element <b>Default: ""</b>
 	     */
-	    "data-previewSelector": {
+	    "previewSelector": {
 	        "value": "",
-	        "key": "previewSelector"
+	        "domAttr": "data-previewSelector"
 	    },
 	    /**
 	     *  Selector of element which twiggers crop-modal <b>Default: ""</b>
 	     */
-	    "data-adjustSelector": {
+	    "adjustSelector": {
 	        "value": "",
-	        "key": "adjustSelector"
+	        "domAttr": "data-adjustSelector"
 	    },
 	    /**
 	     *  Name for formData <b>Default: "cropped"</b>
 	     */
-	    "data-name": {
+	    "name": {
 	        "value": "cropped",
-	        "key": "name"
+	        "domAttr": "data-name"
 	    }
 	};
 	Crop.prototype.reset = function () {
@@ -404,7 +404,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Adds events listeners for modal.
 	 */
 	Crop.prototype.addModalEventListeners = function () {
-	    console.log('addmodallisteners');
 	    var that = this;
 	
 	    this._cropSave = function () {
