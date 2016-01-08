@@ -47,7 +47,7 @@ Crop.prototype._construct = function (sf, node, options) {
     //elements
     this.els = {
         node: node,
-        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
+        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0],
         modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
     };
 
@@ -1058,7 +1058,9 @@ Crop.prototype.attachData = function () {
 };
 
 Crop.prototype.die = function () {
-    console.error("TODO DIE");//TODO DIE
+    this.removeEventListeners();
+    this.removeModalEventListeners();
+    delete this;
 };
 
 export { Crop as default };

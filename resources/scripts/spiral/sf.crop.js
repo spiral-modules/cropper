@@ -148,7 +148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    //elements
 	    this.els = {
 	        node: node,
-	        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0], // todo (renamed from default) they will be not from template
+	        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0],
 	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
 	    };
 	
@@ -198,7 +198,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.els.form = this.els.input ? this.els.input.form : '';
 	    this.form = sf.instancesController.getInstance("form", this.els.form);
-	
 	    this.reset();
 	    this.addEventListeners();
 	    this.attachData();
@@ -1159,7 +1158,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	Crop.prototype.die = function () {
-	    console.error("TODO DIE"); //TODO DIE
+	    this.removeEventListeners();
+	    this.removeModalEventListeners();
+	    console.log('delete');
+	    delete this;
 	};
 	
 	exports.default = Crop;
