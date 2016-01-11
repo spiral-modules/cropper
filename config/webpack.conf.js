@@ -7,12 +7,12 @@ var constantPack = new webpack.DefinePlugin({
 });
 
 module.exports = {
+    watch: true,
     entry: {
         crop: ['./src/index.js']  // webpack workaround issue #300
     },
     output: {
         filename: 'sf.crop.js',
-        //library: 'sCrop',
         libraryTarget: 'umd',
         path: path.resolve(__dirname, '..', 'resources/scripts/spiral/')
     },
@@ -29,17 +29,10 @@ module.exports = {
         loaders: [
             {test: /\.js?$/, loader: 'babel?presets[]=es2015&plugins[]=transform-runtime'}
         ],
-        noParse: [
-            ///\/node_modules\/clone\/clone\.js$/,
-            ///\/node_modules\/eventemitter3\/index\.js$/,
-            ///\/node_modules\/extend\/index\.js$/
-        ]
+        noParse: []
     },
     plugins: [constantPack],
-    devtool: 'source-map',
     externals: {
-        // require("jquery") is external and available
-        //  on the global var jQuery
         "sf": "sf"
     }
 };

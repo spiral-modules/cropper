@@ -1,12 +1,13 @@
-var del = require('del');
-var pkg = require('../package.json');
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var header = require('gulp-header');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
-var webpack = require('webpack');
-var webpackConfig = require('./webpack.conf');
+var del = require('del'),
+    pkg = require('../package.json'),
+    gulp = require('gulp'),
+    gutil = require('gulp-util'),
+    header = require('gulp-header'),
+    rename = require('gulp-rename'),
+    uglify = require('gulp-uglify'),
+    webpack = require('webpack'),
+    sourcemaps = require('gulp-sourcemaps'),
+    webpackConfig = require('./webpack.conf');
 
 var BANNER =
   '/*! Spiral Image Cropper Widget v${pkg.version}\n' +
@@ -31,15 +32,16 @@ module.exports = function(config) {
 
   gulp.task('minify', function() {
     return gulp.src('./resources/scripts/spiral/sf.crop.js')
-        .pipe(uglify({
-          banner: BANNER
-        }))
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(header(BANNER, { pkg: pkg }))
         .pipe(rename({ extname: '.min.js' }))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./resources/scripts/spiral/'));
   });
 
-  gulp.task('dist', function() {
-    return gulp.src(['./resources/scripts/spiral/sf.crop.js', './resources/scripts/spiral/sf.crop.min.js'])
+  gulp.task('full', function() {
+    return gulp.src(['./resources/scripts/spiral/sf.crop.js'])
         .pipe(header(BANNER, { pkg: pkg }))
         .pipe(gulp.dest('./resources/scripts/spiral/'));
   });
