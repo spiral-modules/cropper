@@ -1,3 +1,8 @@
+/*! Spiral Image Cropper Widget v0.4.0
+ *  https://github.com/spiral-modules/image-cropper/
+ *  Copyright (c) 2016, Alex Chepura, Yauheni Yasinau, spiralscout.com
+ */
+
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("sf"));
@@ -497,7 +502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var that = this;
 	    this.reader = new FileReader();
 	    this.reset();
-	    this.reader.onload = (function (theFile) {
+	    this.reader.onload = function (theFile) {
 	        return function (e) {
 	            that.file = {
 	                file: theFile,
@@ -524,7 +529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that.options.onFileProcessed();
 	            };
 	        };
-	    })(file);
+	    }(file);
 	
 	    this.reader.readAsDataURL(file);
 	};
@@ -1211,7 +1216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = {
 	  create: $Object.create,
 	  getProto: $Object.getPrototypeOf,
-	  isEnum: ({}).propertyIsEnumerable,
+	  isEnum: {}.propertyIsEnumerable,
 	  getDesc: $Object.getOwnPropertyDescriptor,
 	  setDesc: $Object.defineProperty,
 	  setDescs: $Object.defineProperties,
