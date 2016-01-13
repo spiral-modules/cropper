@@ -6,7 +6,7 @@ TODO
 
 ## Usage Example
 
-At frontend (dark template required), simple add virtual tag to your form:
+At frontend (dark template required), simply add virtual tag to your form:
 
 ```html
 <dark:use bundle="spiral:cropper-bundle"/>
