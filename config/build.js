@@ -40,11 +40,11 @@ module.exports = function(config) {
         .pipe(gulp.dest('./resources/scripts/spiral/'));
   });
 
-  gulp.task('full', function() {
-    return gulp.src(['./resources/scripts/spiral/sf.crop.js'])
-        .pipe(header(BANNER, { pkg: pkg }))
-        .pipe(gulp.dest('./resources/scripts/spiral/'));
-  });
+  //gulp.task('full', function() {
+  //  return gulp.src(['./resources/scripts/spiral/sf.crop.js'])
+  //      .pipe(header(BANNER, { pkg: pkg }))
+  //      .pipe(gulp.dest('./resources/scripts/spiral/'));
+  //});
 
 };
 

@@ -6,8 +6,20 @@ var constantPack = new webpack.DefinePlugin({
     CROP_VERSION: JSON.stringify(pkg.version)
 });
 
+var BANNER =
+    'Spiral Image Cropper Widget v'+pkg.version+'\n' +
+    'https://github.com/spiral-modules/image-cropper/\n' +
+    'Copyright (c) 2016, Alex Chepura, Yauheni Yasinau, spiralscout.com';
+
+var bannerPlugin = new webpack.BannerPlugin(BANNER);
+var uglifyJsPlugin = new webpack.optimize.UglifyJsPlugin({
+    compress: {
+        warnings: false
+    }
+});
+
 module.exports = {
-    watch: true,
+    //watch: true,
     entry: {
         crop: ['./src/index.js']  // webpack workaround issue #300
     },
@@ -31,7 +43,8 @@ module.exports = {
         ],
         noParse: []
     },
-    plugins: [constantPack],
+    devtool: 'source-map',
+    plugins: [constantPack,bannerPlugin,uglifyJsPlugin],
     externals: {
         "sf": "sf"
     }
