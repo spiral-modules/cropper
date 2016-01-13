@@ -12,11 +12,5 @@ buildTasks(config);
 
 gulp.task('default', ['build']);
 
-gulp.task('build', function () {
-  runsequence(
-      'source',
-      'full',
-      'minify'
-  );
-});
+gulp.task('build', ['build']);
 

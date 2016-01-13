@@ -30,21 +30,5 @@ module.exports = function(config) {
     });
   });
 
-  gulp.task('minify', function() {
-    return gulp.src('./resources/scripts/spiral/sf.crop.js')
-        .pipe(sourcemaps.init())
-        .pipe(uglify())
-        .pipe(header(BANNER, { pkg: pkg }))
-        .pipe(rename({ extname: '.min.js' }))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('./resources/scripts/spiral/'));
-  });
-
-  //gulp.task('full', function() {
-  //  return gulp.src(['./resources/scripts/spiral/sf.crop.js'])
-  //      .pipe(header(BANNER, { pkg: pkg }))
-  //      .pipe(gulp.dest('./resources/scripts/spiral/'));
-  //});
-
 };
 
