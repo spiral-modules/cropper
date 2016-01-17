@@ -1,4 +1,4 @@
-# Image Cropper Widget - POST TRANSITION TEST ARE NOT PERFORMED YET
+# Image Cropper Widget - POST TRANSITION TESTS ARE NOT PERFORMED YET
 Module provides ability to crop user image on client side and send to backend as file stream over ajax call.
 
 ## Installation
