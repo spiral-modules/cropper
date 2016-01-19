@@ -35,11 +35,11 @@ Crop.prototype._construct = function (sf, node, options) {
         this.options = sf.tools.extend(this.options, options);
     }
 
-    if (typeof this.options.showInfo == "string")
-        this.options.showInfo = this.options.showInfo.split(",");
+    if (typeof this.options.info == "string")
+        this.options.info = this.options.info.split(",");
 
-    if (this.options.aspectRatio)
-        this.options.aspectRatio = parseFloat(this.options.aspectRatio);//just to be sure about number format, not string
+    if (this.options.ratio)
+        this.options.ratio = parseFloat(this.options.ratio);//just to be sure about number format, not string
     if (typeof this.options.onFileProcessed != "function")
         this.options.onFileProcessed = noop;
 
@@ -50,11 +50,8 @@ Crop.prototype._construct = function (sf, node, options) {
         modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
     };
 
-    if (this.options.previewSelector) {this.els.preview = document.querySelector(this.options.previewSelector);} else {
-        console.warn('Provide image-preview selector with data-previewSelector');
-    }
-    if (this.options.adjustSelector) {this.els.adjust = document.querySelector(this.options.adjustSelector);} else{
-        console.warn('Provide adjust-crop selector with data-adjustSelector');
+    if (this.options.preview) {this.els.preview = document.querySelector(this.options.preview);} else {
+        console.warn('Cropper: no preview provided');
     }
 
     if (!this.options.ajaximage && !this.els.input) {
@@ -134,9 +131,9 @@ Crop.prototype.optionsToGrab  = {
     /**
      *  How to send: cropped or full size with coordinates to crop on server <b>Default: "cropped"</b> <i>Optional: "full"</i>
      */
-    "sendFormat": {
+    "format": {
         "value": "cropped",
-        "domAttr": "data-sendFormat"
+        "domAttr": "data-format"
     },
     /**
      *  Preloading of image  <b>Default: "false"</b> <i>Optional: url of image to preload</i>
@@ -158,32 +155,32 @@ Crop.prototype.optionsToGrab  = {
     /**
      *  Locked aspect ratio <b>Default: false</b>
      */
-    "aspectRatio": {
+    "ratio": {
         "value": false,
-        "domAttr": "data-aspectRatio"
+        "domAttr": "data-ratio"
     },
     /**
      *  What info to show <b>Default: []</b></br>
-     *  <b>Example: </b>data-showInfo="ratio,origSize,croppedSize"</br>
+     *  <b>Example: </b>data-info="ratio,origSize,croppedSize"</br>
      *  <b>Note: </b>done only ratio
      */
-    "showInfo": {
+    "info": {
         "value": [],
-        "domAttr": "data-showInfo"
+        "domAttr": "data-info"
     },
     /**
      *  ID of preview element <b>Default: ""</b>
      */
-    "previewSelector": {
+    "preview": {
         "value": "",
-        "domAttr": "data-previewSelector"
+        "domAttr": "data-preview"
     },
     /**
      *  Selector of element which twiggers crop-modal <b>Default: ""</b>
      */
-    "adjustSelector": {
+    "adjust": {
         "value": "",
-        "domAttr": "data-adjustSelector"
+        "domAttr": "data-adjust"
     },
     /**
      *  Name for formData <b>Default: "cropped"</b>
@@ -244,8 +241,8 @@ Crop.prototype.changeInfo = function (type, value) {
  */
 Crop.prototype.updateInfo = function () {
     var that = this;
-    if (this.options.showInfo.length > 0) {
-        this.options.showInfo.forEach(function (info) {
+    if (this.options.info.length > 0) {
+        this.options.info.forEach(function (info) {
             if (info == "ratio")
                 that.changeInfo("ratio", Math.round(that.cnv.crop.w / that.cnv.crop.h * 100) / 100);
             if (info == "croppedSize")
@@ -466,16 +463,16 @@ Crop.prototype.prepare = function () {
         that.cnv.crop.x2 = that.cnv.image.w;
         that.cnv.crop.y2 = that.cnv.image.h;
 
-        if (that.options.aspectRatio) {
-            if (that.cnv.orig.ratio > that.options.aspectRatio) {
+        if (that.options.ratio) {
+            if (that.cnv.orig.ratio > that.options.ratio) {
                 var w = that.cnv.crop.w;
-                that.setWidth(Math.round(that.cnv.start.crop.h * that.options.aspectRatio));
+                that.setWidth(Math.round(that.cnv.start.crop.h * that.options.ratio));
                 that.cnv.start.crop.w = that.cnv.crop.w;
                 that.setLeft(Math.round((w - that.cnv.crop.w) / 2));
                 that.cnv.crop.x2 = that.cnv.crop.x + that.cnv.crop.w;
             } else {
                 var h = that.cnv.crop.h;
-                that.setHeight(Math.round(that.cnv.start.crop.w / that.options.aspectRatio));
+                that.setHeight(Math.round(that.cnv.start.crop.w / that.options.ratio));
                 that.cnv.start.crop.h = that.cnv.crop.h;
                 that.setTop(Math.round((h - that.cnv.crop.h) / 2));
                 that.cnv.crop.y2 = that.cnv.crop.y + that.cnv.crop.h;
@@ -484,7 +481,7 @@ Crop.prototype.prepare = function () {
             that.save();
         }
         that.updateInfo();
-        if (that.options.showInfo.indexOf("origSize") > -1) {
+        if (that.options.info.indexOf("origSize") > -1) {
             that.changeInfo("origSize", [that.cnv.orig.w, that.cnv.orig.h]); //no need to pass through updateInfo since it's static
         }
 
@@ -543,7 +540,6 @@ Crop.prototype.onCrop = function (e) {
             break;
     }
     this.updateInfo();
-//    this.setDimmers();
 };
 
 /**
@@ -596,25 +592,25 @@ Crop.prototype.setHeight = function (h) {
  */
 Crop.prototype.adjustN = function (notDefaultSide, y) {
     if (notDefaultSide) {
-        if ((this.cnv.crop.y2 - y) * this.options.aspectRatio <= this.cnv.crop.x2) {
+        if ((this.cnv.crop.y2 - y) * this.options.ratio <= this.cnv.crop.x2) {
             this.setTop(y);
             this.setHeight(this.cnv.crop.y2 - y);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.setLeft(this.cnv.crop.x2 - this.cnv.crop.w);
         } else {
             this.setLeft(0);
             this.setWidth(this.cnv.crop.x2);
-            this.setTop(this.cnv.crop.y2 - Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setTop(this.cnv.crop.y2 - Math.round(this.cnv.crop.w / this.options.ratio));
         }
     } else {
-        if ((this.cnv.crop.y2 - y) * this.options.aspectRatio + this.cnv.crop.x <= this.cnv.image.w) {
+        if ((this.cnv.crop.y2 - y) * this.options.ratio + this.cnv.crop.x <= this.cnv.image.w) {
             this.setTop(y);
             this.setHeight(this.cnv.crop.y2 - y);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.cnv.crop.x2 = this.cnv.crop.x + this.cnv.crop.w;
         } else {
             this.setWidth(this.cnv.image.w - this.cnv.crop.x);
-            this.setTop(this.cnv.crop.y2 - Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setTop(this.cnv.crop.y2 - Math.round(this.cnv.crop.w / this.options.ratio));
             this.setHeight(this.cnv.crop.y2 - this.cnv.crop.y);
             this.cnv.crop.x2 = this.cnv.image.w;
         }
@@ -626,13 +622,13 @@ Crop.prototype.adjustN = function (notDefaultSide, y) {
  * @param {Boolean} [notDefaultSide]
  */
 Crop.prototype.setN = function (notDefaultSide) {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (this.cnv.cursor.y > 0) {
             if (this.cnv.cursor.y < this.cnv.crop.y2) {
                 this.adjustN(notDefaultSide, this.cnv.cursor.y);
             } else {
                 this.setHeight(1);
-                this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+                this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
                 if (notDefaultSide) {
                     this.setLeft(this.cnv.crop.x2 - 1);
                 } else {
@@ -666,26 +662,26 @@ Crop.prototype.setN = function (notDefaultSide) {
  */
 Crop.prototype.adjustS = function (notDefaultSide, y2) {
     if (notDefaultSide) {
-        if ((y2 - this.cnv.crop.y) * this.options.aspectRatio <= this.cnv.crop.x2) {
+        if ((y2 - this.cnv.crop.y) * this.options.ratio <= this.cnv.crop.x2) {
             this.setHeight(y2 - this.cnv.crop.y);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.setLeft(this.cnv.crop.x2 - this.cnv.crop.w);
             this.cnv.crop.y2 = y2;
         } else {
             this.setLeft(0);
             this.setWidth(this.cnv.crop.x2);
-            this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
             this.cnv.crop.y2 = this.cnv.crop.y + this.cnv.crop.h;
         }
     } else {
-        if ((y2 - this.cnv.crop.y) * this.options.aspectRatio + this.cnv.crop.x <= this.cnv.image.w) {
+        if ((y2 - this.cnv.crop.y) * this.options.ratio + this.cnv.crop.x <= this.cnv.image.w) {
             this.setHeight(y2 - this.cnv.crop.y);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.cnv.crop.y2 = y2;
             this.cnv.crop.x2 = this.cnv.crop.x + this.cnv.crop.w;
         } else {
             this.setWidth(this.cnv.image.w - this.cnv.crop.x);
-            this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
             this.cnv.crop.x2 = this.cnv.image.w;
             this.cnv.crop.y2 = this.cnv.crop.y + this.cnv.crop.h;
         }
@@ -697,13 +693,13 @@ Crop.prototype.adjustS = function (notDefaultSide, y2) {
  * @param {Boolean} [notDefaultSide]
  */
 Crop.prototype.setS = function (notDefaultSide) {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (this.cnv.cursor.y < this.cnv.image.h) {
             if (this.cnv.cursor.y > this.cnv.crop.y) {
                 this.adjustS(notDefaultSide, this.cnv.cursor.y);
             } else {
                 this.setHeight(1);
-                this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+                this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
                 if (notDefaultSide) {
                     this.setLeft(this.cnv.crop.x2 - 1);
                 } else {
@@ -737,26 +733,26 @@ Crop.prototype.setS = function (notDefaultSide) {
  */
 Crop.prototype.adjustW = function (notDefaultSide, x) {
     if (notDefaultSide) {
-        if (this.cnv.crop.y2 - (this.cnv.crop.x2 - x) / this.options.aspectRatio >= 0) {
+        if (this.cnv.crop.y2 - (this.cnv.crop.x2 - x) / this.options.ratio >= 0) {
             this.setLeft(x);
             this.setWidth(this.cnv.crop.x2 - x);
-            this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
             this.setTop(this.cnv.crop.y2 - this.cnv.crop.h);
         } else {
             this.setTop(0);
             this.setHeight(this.cnv.crop.y2);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.setLeft(this.cnv.crop.x2 - this.cnv.crop.w);
         }
     } else {
-        if ((this.cnv.crop.x2 - x) / this.options.aspectRatio + this.cnv.crop.y <= this.cnv.image.h) {
+        if ((this.cnv.crop.x2 - x) / this.options.ratio + this.cnv.crop.y <= this.cnv.image.h) {
             this.setLeft(x);
             this.setWidth(this.cnv.crop.x2 - x);
-            this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
             this.cnv.crop.y2 = this.cnv.crop.y + this.cnv.crop.h;
         } else {
             this.setHeight(this.cnv.image.h - this.cnv.crop.y);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.setLeft(this.cnv.crop.x2 - this.cnv.crop.w);
             this.cnv.crop.y2 = this.cnv.image.h;
         }
@@ -768,13 +764,13 @@ Crop.prototype.adjustW = function (notDefaultSide, x) {
  * @param {Boolean} [notDefaultSide]
  */
 Crop.prototype.setW = function (notDefaultSide) {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (this.cnv.cursor.x > 0) {
             if (this.cnv.cursor.x < this.cnv.crop.x2) {
                 this.adjustW(notDefaultSide, this.cnv.cursor.x);
             } else {
                 this.setWidth(1);
-                this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+                this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
                 if (notDefaultSide) {
                     this.setTop(this.cnv.crop.y2 - 1);
                 } else {
@@ -807,26 +803,26 @@ Crop.prototype.setW = function (notDefaultSide) {
  */
 Crop.prototype.adjustE = function (notDefaultSide, x) {
     if (notDefaultSide) {
-        if (this.cnv.crop.y2 - (x - this.cnv.crop.x) / this.options.aspectRatio >= 0) {
+        if (this.cnv.crop.y2 - (x - this.cnv.crop.x) / this.options.ratio >= 0) {
             this.setWidth(x - this.cnv.crop.x);
-            this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
             this.setTop(this.cnv.crop.y2 - this.cnv.crop.h);
             this.cnv.crop.x2 = x;
         } else {
             this.setTop(0);
             this.setHeight(this.cnv.crop.y2);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.cnv.crop.x2 = this.cnv.crop.x + this.cnv.crop.w;
         }
     } else {
-        if ((x - this.cnv.crop.x) / this.options.aspectRatio + this.cnv.crop.y <= this.cnv.image.h) {
+        if ((x - this.cnv.crop.x) / this.options.ratio + this.cnv.crop.y <= this.cnv.image.h) {
             this.setWidth(x - this.cnv.crop.x);
-            this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+            this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
             this.cnv.crop.x2 = x;
             this.cnv.crop.y2 = this.cnv.crop.y + this.cnv.crop.h;
         } else {
             this.setHeight(this.cnv.image.h - this.cnv.crop.y);
-            this.setWidth(Math.round(this.cnv.crop.h * this.options.aspectRatio));
+            this.setWidth(Math.round(this.cnv.crop.h * this.options.ratio));
             this.cnv.crop.y2 = this.cnv.image.h;
             this.cnv.crop.x2 = this.cnv.crop.x + this.cnv.crop.w;
         }
@@ -838,13 +834,13 @@ Crop.prototype.adjustE = function (notDefaultSide, x) {
  * @param {Boolean} [notDefaultSide]
  */
 Crop.prototype.setE = function (notDefaultSide) {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (this.cnv.cursor.x < this.cnv.image.w) {
             if (this.cnv.cursor.x > this.cnv.crop.x) {
                 this.adjustE(notDefaultSide, this.cnv.cursor.x);
             } else {
                 this.setWidth(1);
-                this.setHeight(Math.round(this.cnv.crop.w / this.options.aspectRatio));
+                this.setHeight(Math.round(this.cnv.crop.w / this.options.ratio));
                 if (notDefaultSide) {
                     this.setTop(this.cnv.crop.y2 - 1);
                 } else {
@@ -875,7 +871,7 @@ Crop.prototype.setE = function (notDefaultSide) {
  * Sets top-right corner.
  */
 Crop.prototype.setNE = function () {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x2) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y) && this.cnv.cursor.x <= this.cnv.crop.x2) {
             this.setN();
         } else {
@@ -891,7 +887,7 @@ Crop.prototype.setNE = function () {
  * Sets bottom-right corner.
  */
 Crop.prototype.setSE = function () {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x2) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y - this.cnv.crop.h) && this.cnv.cursor.x <= this.cnv.crop.x2) {
             this.setS();
         } else {
@@ -907,7 +903,7 @@ Crop.prototype.setSE = function () {
  * Sets bottom-left corner.
  */
 Crop.prototype.setSW = function () {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y - this.cnv.crop.h) && this.cnv.cursor.x >= this.cnv.crop.x) {
             this.setS(true);
         } else {
@@ -923,7 +919,7 @@ Crop.prototype.setSW = function () {
  * Sets top-left corner.
  */
 Crop.prototype.setNW = function () {
-    if (this.options.aspectRatio) {
+    if (this.options.ratio) {
         if (Math.abs(this.cnv.cursor.x - this.cnv.crop.x) > Math.abs(this.cnv.cursor.y - this.cnv.crop.y) && this.cnv.cursor.x >= this.cnv.crop.x) {
             this.setN(true);
         } else {
@@ -963,24 +959,6 @@ Crop.prototype.move = function () {
 
     this.cnv.crop.x2 = this.cnv.crop.x + this.cnv.crop.w;
     this.cnv.crop.y2 = this.cnv.crop.y + this.cnv.crop.h;
-};
-
-/**
- * Deprecated.
- * Sets dimmers.
- */
-Crop.prototype.setDimmers = function () {
-    this.els.dimmers.n.style.top = this.cnv.crop.y - 1000 + "px";
-    this.els.dimmers.n.style.left = this.cnv.crop.x + "px";
-    this.els.dimmers.n.style.width = this.cnv.crop.w + "px";
-
-    this.els.dimmers.e.style.left = this.cnv.crop.x2 + "px";
-
-    this.els.dimmers.s.style.top = this.cnv.crop.y2 + "px";
-    this.els.dimmers.s.style.left = this.cnv.crop.x + "px";
-    this.els.dimmers.s.style.width = this.cnv.crop.w + "px";
-
-    this.els.dimmers.w.style.left = this.cnv.crop.x - 1000 + "px";
 };
 
 /**
@@ -1057,13 +1035,12 @@ Crop.prototype.save = function () {
 Crop.prototype.attachData = function () {
     var that = this;
     if (this.form) {
-        if (this.options.sendFormat == "cropped") {
-            this.form.events.on("onBeforeSend", function(options){
+        if (this.options.format == "cropped") {
+            this.form.events.on("beforeSend", function(options){
                 options.data.append(that.options.name, that.file.blob, that.file.name);
             });
         } else {
-
-            this.form.events.on("onBeforeSend", function (options) {
+            this.form.events.on("beforeSend", function (options) {
                 options.data.append(that.options.name, that.file.file, that.file.name);
                 options.data.append(that.options.name + "-cropData[cropWidth]", that.cnv.toSave.w);
                 options.data.append(that.options.name + "-cropData[cropHeight]", that.cnv.toSave.h);

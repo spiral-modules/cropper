@@ -6,16 +6,34 @@
     <link rel="stylesheet" href="sf.css"/>
     <script src="sf.min.js"></script>
     <script src="../resources/scripts/spiral/sf.crop.js"></script>
+    <style>
+        form {
+            -webkit-flex: 1 1 auto;
+            flex: 1 1 auto;
+        }
+        .crop-preview {
+            max-width: 400px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 <h1>Crop example</h1>
-<div style="margin-bottom: 20px;">
-    <form class="js-sf-form" action="action.php" data-headers='{}'>
-        <input type="file" data-name="test" class="js-sf-crop" data-showInfo="ratio,croppedSize,origSize" data-sendFormat="full" data-adjustSelector=".crop-adjust"
-               data-previewSelector=".crop-preview" data-ajaximage="image.jpg"/>
-        <div class="crop-preview" style="max-width: 400px; margin-top: 20px;"></div>
-        <span class="crop-adjust btn" style="margin-top: 15px; background-color: aqua;">Adjust cropping</span>
-        <input type="submit" class="btn" style="background-color: burlywood;" value="Submit form"/>
+<div style="margin-bottom: 20px; display: flex;">
+    <form class="js-sf-form" action="action.php">
+        <h1>Minimal crop demo</h1>
+        <input type="file" data-name="test" class="js-sf-crop" data-preview="#crop-preview-2"/>
+        <div id="crop-preview-2" class="crop-preview"></div>
+        <input type="submit" value="Submit form"/>
+    </form>
+
+    <form class="js-sf-form" action="action.php">
+        <h1>Crop demo with different settings</h1>
+        <input type="file" data-name="test" class="js-sf-crop" data-ratio="1" data-info="ratio,croppedSize,origSize" data-format="full" data-adjust=".crop-adjust"
+               data-preview=".crop-preview-1" data-ajaximage="image.jpg"/>
+        <div class="crop-preview-1 crop-preview"></div>
+        <button class="crop-adjust">Adjust cropping</button>
+        <input type="submit" value="Submit form"/>
     </form>
 </div>
 </body>

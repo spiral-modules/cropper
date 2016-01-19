@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var runsequence = require('run-sequence');
+//var runsequence = require('run-sequence');
 var buildTasks = require('./config/build.js');
 
 var config = {
@@ -12,5 +12,5 @@ buildTasks(config);
 
 gulp.task('default', ['build']);
 
-gulp.task('build', ['build']);
+gulp.task('build', ['source']);
 
