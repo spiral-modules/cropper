@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__webpack_require__(7); //resolved in webpack's "externals"
 	
-	_sf2.default.instancesController.registerInstanceType(_crop2.default, "js-sf-crop");
+	_sf2.default.instancesController.registerInstanceType(_crop2.default, "js-sf-cropper");
 	module.exports = _crop2.default; // ES6 default export will not expose us as global
 
 /***/ },

@@ -22,14 +22,14 @@
 <div style="margin-bottom: 20px; display: flex;">
     <form class="js-sf-form" action="action.php">
         <h1>Minimal crop demo</h1>
-        <input type="file" data-name="test" class="js-sf-crop" data-preview="#crop-preview-2"/>
+        <input type="file" data-name="test" class="js-sf-cropper" data-preview="#crop-preview-2"/>
         <div id="crop-preview-2" class="crop-preview"></div>
         <input type="submit" value="Submit form"/>
     </form>
 
     <form class="js-sf-form" action="action.php">
         <h1>Crop demo with different settings</h1>
-        <input type="file" data-name="test" class="js-sf-crop" data-ratio="1" data-info="ratio,croppedSize,origSize" data-format="full" data-adjust=".crop-adjust"
+        <input type="file" data-name="test" class="js-sf-cropper" data-ratio="1" data-info="ratio,croppedSize,origSize" data-format="full" data-adjust=".crop-adjust"
                data-preview=".crop-preview-1" data-ajaximage="image.jpg"/>
         <div class="crop-preview-1 crop-preview"></div>
         <button class="crop-adjust">Adjust cropping</button>
