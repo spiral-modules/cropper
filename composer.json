@@ -8,5 +8,13 @@
             "email": "alex@spiralscout.com"
         }
     ],
-    "require": {}
+    "require": {
+        "spiral/framework": "*",
+        "spiral/toolkit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spiral\\": "source/"
+        }
+    }
 }
