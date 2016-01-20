@@ -1,0 +1,12 @@
+{
+    "name": "spiral/cropper",
+    "description": "Image Cropper Widget",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Chepura",
+            "email": "alex@spiralscout.com"
+        }
+    ],
+    "require": {}
+}
