@@ -1,4 +1,3 @@
-<dark:use bundle="spiral:cropper-bundle"/>
 <dark:use bundle="spiral:bundle"/>
 
 <extends:spiral:element/>
