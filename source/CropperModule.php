@@ -19,13 +19,9 @@ class CropperModule implements ModuleInterface
      */
     public function register(RegistratorInterface $registrator)
     {
-        /**
-         * Let's register new view namespace 'cropper'.
-         */
         $registrator->configure('views', 'namespaces.spiral', 'spiral/cropper', [
             "directory('libraries') . 'spiral/cropper/source/views/',",
         ]);
-
     }
 
     /**
@@ -33,9 +29,6 @@ class CropperModule implements ModuleInterface
      */
     public function publish(PublisherInterface $publisher, DirectoriesInterface $directories)
     {
-        /**
-         * Publishing all module visual resources. We are going to overwrite existed files.
-         */
         $publisher->publishDirectory(
             __DIR__ . '/../resources',                        //js, css
             $directories->directory('public') . 'resources',  //Expected directory in webroot
