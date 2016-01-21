@@ -1,4 +1,4 @@
-.modal.crop {
+.sf-crop-modal {
   position: fixed;
   left: 50%;
   top: 50%;
@@ -13,7 +13,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  .btn-save {
+  .sf-crop-save {
     display: block;
     margin: 0 auto;
     padding: 7px 22px;
@@ -28,46 +28,21 @@
     }
   }
 
-  .crop-container {
+  .sf-crop-container {
     position: relative;
     canvas{
       display: block;
     }
   }
 
-  .image-original {
-    font-size: 50px;
-  }
-
-  .crop-wrapper {
+  .sf-crop-wrapper {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
 
-    .thumb {
-      max-width: 100%;
-      max-height: 100%;
-
-      > img {
-        max-width: 100%;
-        max-height: 100%;
-        position: relative;
-        visibility: hidden;
-        z-index: -1;
-        width: 100%;
-        min-width: 100%;
-        margin-bottom: -4px;
-      }
-    }
-
-    .transparent-image {
-      max-width: 100%;
-      max-height: 100%;
-    }
-
-    .crop-elements{
+    .sf-crop-elements{
       position: absolute;
       border: 1px dashed black;
       top: 0;
@@ -78,7 +53,7 @@
       cursor: move;
     }
 
-    .dimmers-container {
+    .sf-crop-dimmers-container {
       position: absolute;
       overflow: hidden;
       top: 0;
@@ -196,21 +171,12 @@
     }
   }
 
-  .crop-save{
-    width: 100%;
-  }
-
-  .change-orientation {
-    position: relative;
-    top: -15px;
-  }
-
-  .modal-header{
+  .sf-crop-modal-header{
     margin-bottom: 20px;
-    .cropper-info{
+    .sf-crop-cropper-info{
       font-size: 12px;
     }
-    .close{
+    .sf-crop-close{
       position: absolute;
       background: transparent;
       padding: 0;
