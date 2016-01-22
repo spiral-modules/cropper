@@ -147,11 +147,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.els = {
 	        node: node,
 	        input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0],
-	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
+	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-modal')[0],
+	        backdrop: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-backdrop')[0]
 	    };
 	
 	    if (this.options.fileNameSelector) {
-	        this.options.fileNameSelector.charAt(0) === " " ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector) : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector);
+	        this.options.fileNameSelector.charAt(0) === " " ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)[0] : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector)[0];
 	    }
 	
 	    if (this.options.preview) {
@@ -361,7 +362,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Shows modal with cropper
 	 */
 	Crop.prototype.showPopup = function () {
+	    var that = this;
 	    document.body.appendChild(this.els.modal);
+	    document.body.appendChild(this.els.backdrop);
+	    setTimeout(function () {
+	        that.els.modal.classList.add('visible');
+	        that.els.backdrop.classList.add('visible');
+	    }, 0);
 	    this.addModalEventListeners();
 	    this.removeEventListeners();
 	};
@@ -369,7 +376,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Hides modal with cropper
 	 */
 	Crop.prototype.hidePopup = function () {
-	    this.els.modal.parentNode.removeChild(this.els.modal);
+	    var that = this;
+	    this.els.modal.classList.remove('visible');
+	    this.els.backdrop.classList.remove('visible');
+	
+	    setTimeout(function () {
+	        that.els.modal.parentNode.removeChild(that.els.modal);
+	        that.els.backdrop.parentNode.removeChild(that.els.backdrop);
+	    }, 300);
+	
 	    this.removeModalEventListeners();
 	    this.addEventListeners();
 	};
@@ -459,6 +474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        that.inCropping = false;
 	    };
 	    this.els.closePopup.addEventListener("click", this._hidePopup);
+	    this.els.backdrop.addEventListener("click", this._hidePopup);
 	    this.els.cropSave.addEventListener("click", this._cropSave);
 	    this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
@@ -468,6 +484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	Crop.prototype.removeModalEventListeners = function () {
 	    this.els.closePopup.removeEventListener("click", this._hidePopup);
+	    this.els.backdrop.removeEventListener("click", this._hidePopup);
 	    this.els.cropSave.removeEventListener("click", this._cropSave);
 	    this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
@@ -1209,7 +1226,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=sf-crop-modal><div class=sf-crop-modal-header><button class=sf-crop-close>×</button><div class=sf-crop-cropper-info><div class=sf-crop-ratio></div><div class=sf-crop-orig-size></div><div class=sf-crop-cropped-size></div></div></div><div class=sf-crop-modal-body><div class=sf-crop-container><div class=sf-crop-image-original></div><div class=sf-crop-wrapper><div class=sf-crop-dimmers-container><div class=dimmers><div class=\"dimmer dimmer-N\"></div><div class=\"dimmer dimmer-E\"></div><div class=\"dimmer dimmer-S\"></div><div class=\"dimmer dimmer-W\"></div></div></div><div class=sf-crop-elements><div class=\"handler handler-N\"></div><div class=\"handler handler-NE\"></div><div class=\"handler handler-E\"></div><div class=\"handler handler-SE\"></div><div class=\"handler handler-S\"></div><div class=\"handler handler-SW\"></div><div class=\"handler handler-W\"></div><div class=\"handler handler-NW\"></div></div></div></div></div><div class=sf-crop-modal-footer><br><button type=button class=\"btn sf-crop-save\">Save changes</button></div></div>";
+	module.exports = "<div class=sf-crop-modal><div class=sf-crop-modal-header><button class=sf-crop-close>×</button><div class=sf-crop-cropper-info><div class=sf-crop-ratio></div><div class=sf-crop-orig-size></div><div class=sf-crop-cropped-size></div></div></div><div class=sf-crop-modal-body><div class=sf-crop-container><div class=sf-crop-image-original></div><div class=sf-crop-wrapper><div class=sf-crop-dimmers-container><div class=dimmers><div class=\"dimmer dimmer-N\"></div><div class=\"dimmer dimmer-E\"></div><div class=\"dimmer dimmer-S\"></div><div class=\"dimmer dimmer-W\"></div></div></div><div class=sf-crop-elements><div class=\"handler handler-N\"></div><div class=\"handler handler-NE\"></div><div class=\"handler handler-E\"></div><div class=\"handler handler-SE\"></div><div class=\"handler handler-S\"></div><div class=\"handler handler-SW\"></div><div class=\"handler handler-W\"></div><div class=\"handler handler-NW\"></div></div></div></div></div><div class=sf-crop-modal-footer><br><button type=button class=\"btn sf-crop-save\">Save changes</button></div></div><div class=sf-crop-backdrop></div>";
 
 /***/ },
 /* 7 */
@@ -1246,7 +1263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".sf-crop-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:20px;background-color:#fff;box-shadow:0 0 3px #000;overflow:auto;z-index:1000;width:auto;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.sf-crop-modal .sf-crop-save{display:block;margin:0 auto;border-width:0;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.6);background-color:#468ebe;color:#ecf0f1;transition:background-color .3s}.sf-crop-modal .sf-crop-save:focus,.sf-crop-modal .sf-crop-save:hover{background-color:#2778ae}.sf-crop-modal .sf-crop-container{position:relative}.sf-crop-modal .sf-crop-container canvas{display:block}.sf-crop-modal .sf-crop-wrapper{position:absolute;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .sf-crop-elements{position:absolute;border:1px dashed #000;top:0;width:100%;height:100%;max-width:100%;max-height:100%;cursor:move}.sf-crop-modal .sf-crop-wrapper .sf-crop-dimmers-container{position:absolute;overflow:hidden;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .dimmers{position:absolute}.sf-crop-modal .sf-crop-wrapper .dimmer{position:absolute;width:1000px;height:1000px;background-color:#000;opacity:.3}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-N{bottom:100%;left:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-E{left:100%;top:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-S{top:100%;right:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-W{bottom:0;right:100%}.sf-crop-modal .sf-crop-wrapper .handler{position:absolute;border:1px solid #333;width:10px;height:10px;background:#fff;opacity:.5}.sf-crop-modal .sf-crop-wrapper .handler.handler-N{top:0;left:50%;margin-top:-6px;margin-left:-6px;cursor:n-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-NE{top:0;right:0;margin-top:-6px;margin-right:-6px;cursor:ne-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-E{top:50%;right:0;margin-top:-6px;margin-right:-6px;cursor:e-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-SE{bottom:0;right:0;margin-bottom:-6px;margin-right:-6px;cursor:se-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-S{bottom:0;left:50%;margin-bottom:-6px;margin-left:-6px;cursor:s-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-SW{bottom:0;left:0;margin-bottom:-6px;margin-left:-6px;cursor:sw-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-W{top:50%;left:0;margin-top:-6px;margin-left:-6px;cursor:w-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-NW{top:0;left:0;margin-top:-6px;margin-left:-6px;cursor:nw-resize}.sf-crop-modal .sf-crop-modal-header{margin-bottom:20px}.sf-crop-modal .sf-crop-modal-header .sf-crop-cropper-info{font-size:12px}.sf-crop-modal .sf-crop-modal-header .sf-crop-close{position:absolute;background:transparent;padding:0;top:10px;right:15px;font-size:24px;border:none;opacity:.2;cursor:pointer}.sf-crop-modal .sf-crop-modal-header .sf-crop-close:hover{opacity:1}", ""]);
+	exports.push([module.id, ".sf-crop-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:20px;background-color:#fff;box-shadow:0 0 3px #000;overflow:auto;z-index:1000;width:auto;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;opacity:0;transition:opacity .3s ease}.sf-crop-modal.visible{opacity:1}.sf-crop-modal .sf-crop-save{display:block;margin:0 auto;border-width:0;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.6);background-color:#468ebe;color:#ecf0f1;transition:background-color .3s}.sf-crop-modal .sf-crop-save:focus,.sf-crop-modal .sf-crop-save:hover{background-color:#2778ae}.sf-crop-modal .sf-crop-container{position:relative}.sf-crop-modal .sf-crop-container canvas{display:block}.sf-crop-modal .sf-crop-wrapper{position:absolute;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .sf-crop-elements{position:absolute;border:1px dashed #000;top:0;width:100%;height:100%;max-width:100%;max-height:100%;cursor:move}.sf-crop-modal .sf-crop-wrapper .sf-crop-dimmers-container{position:absolute;overflow:hidden;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .dimmers{position:absolute}.sf-crop-modal .sf-crop-wrapper .dimmer{position:absolute;width:1000px;height:1000px;background-color:#000;opacity:.3}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-N{bottom:100%;left:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-E{left:100%;top:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-S{top:100%;right:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-W{bottom:0;right:100%}.sf-crop-modal .sf-crop-wrapper .handler{position:absolute;border:1px solid #333;width:10px;height:10px;background:#fff;opacity:.5}.sf-crop-modal .sf-crop-wrapper .handler.handler-N{top:0;left:50%;margin-top:-6px;margin-left:-6px;cursor:n-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-NE{top:0;right:0;margin-top:-6px;margin-right:-6px;cursor:ne-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-E{top:50%;right:0;margin-top:-6px;margin-right:-6px;cursor:e-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-SE{bottom:0;right:0;margin-bottom:-6px;margin-right:-6px;cursor:se-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-S{bottom:0;left:50%;margin-bottom:-6px;margin-left:-6px;cursor:s-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-SW{bottom:0;left:0;margin-bottom:-6px;margin-left:-6px;cursor:sw-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-W{top:50%;left:0;margin-top:-6px;margin-left:-6px;cursor:w-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-NW{top:0;left:0;margin-top:-6px;margin-left:-6px;cursor:nw-resize}.sf-crop-modal .sf-crop-modal-header{margin-bottom:20px}.sf-crop-modal .sf-crop-modal-header .sf-crop-cropper-info{font-size:12px}.sf-crop-modal .sf-crop-modal-header .sf-crop-close{position:absolute;background:transparent;padding:0;top:10px;right:15px;font-size:24px;border:none;opacity:.2;cursor:pointer}.sf-crop-modal .sf-crop-modal-header .sf-crop-close:hover{opacity:1}.sf-crop-backdrop{top:0;left:0;position:fixed;background-color:#000;width:100vw;height:100vh;opacity:0;transition:opacity .3s ease}.sf-crop-backdrop.visible{opacity:.4}", ""]);
 	
 	// exports
 

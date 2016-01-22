@@ -14,6 +14,11 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  &.visible{
+    opacity: 1;
+  }
   .sf-crop-save {
     display: block;
     margin: 0 auto;
@@ -190,6 +195,20 @@
         opacity: 1;
       }
     }
+  }
+}
+.sf-crop-backdrop {
+  top: 0;
+  left: 0;
+  position: fixed;
+  background-color: #000;
+
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  &.visible{
+    opacity: 0.4;
   }
 }
 

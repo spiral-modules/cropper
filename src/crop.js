@@ -47,13 +47,14 @@ Crop.prototype._construct = function (sf, node, options) {
     this.els = {
         node: node,
         input: node.tagName === "INPUT" ? node : node.getElementsByClassName("sf-crop-input")[0],
-        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
+        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-modal')[0],
+        backdrop: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-backdrop')[0]
     };
 
     if (this.options.fileNameSelector) {
         this.options.fileNameSelector.charAt(0) === " "
-            ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)
-            : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector);
+            ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)[0]
+            : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector)[0];
     }
 
     if (this.options.preview) {this.els.preview = document.querySelector(this.options.preview);} else {
@@ -266,7 +267,13 @@ Crop.prototype.updateInfo = function () {
  * Shows modal with cropper
  */
 Crop.prototype.showPopup = function () {
+    var that = this;
     document.body.appendChild(this.els.modal);
+    document.body.appendChild(this.els.backdrop);
+    setTimeout(function(){
+        that.els.modal.classList.add('visible');
+        that.els.backdrop.classList.add('visible');
+    }, 0);
     this.addModalEventListeners();
     this.removeEventListeners();
 };
@@ -274,7 +281,15 @@ Crop.prototype.showPopup = function () {
  * Hides modal with cropper
  */
 Crop.prototype.hidePopup = function () {
-    this.els.modal.parentNode.removeChild(this.els.modal);
+    var that = this;
+    this.els.modal.classList.remove('visible');
+    this.els.backdrop.classList.remove('visible');
+
+    setTimeout(function(){
+        that.els.modal.parentNode.removeChild(that.els.modal);
+        that.els.backdrop.parentNode.removeChild(that.els.backdrop);
+    }, 300);
+
     this.removeModalEventListeners();
     this.addEventListeners();
 };
@@ -364,6 +379,7 @@ Crop.prototype.addModalEventListeners = function () {
         that.inCropping = false;
     };
     this.els.closePopup.addEventListener("click", this._hidePopup);
+    this.els.backdrop.addEventListener("click", this._hidePopup);
     this.els.cropSave.addEventListener("click", this._cropSave);
     this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
     this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
@@ -373,6 +389,7 @@ Crop.prototype.addModalEventListeners = function () {
 
 Crop.prototype.removeModalEventListeners = function () {
     this.els.closePopup.removeEventListener("click", this._hidePopup);
+    this.els.backdrop.removeEventListener("click", this._hidePopup);
     this.els.cropSave.removeEventListener("click", this._cropSave);
     this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
     this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
