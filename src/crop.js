@@ -52,9 +52,10 @@ Crop.prototype._construct = function (sf, node, options) {
     };
 
     if (this.options.fileNameSelector) {
+
         this.options.fileNameSelector.charAt(0) === " "
-            ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)[0]
-            : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector)[0];
+            ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)
+            : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector);
     }
 
     if (this.options.preview) {this.els.preview = document.querySelector(this.options.preview);} else {
