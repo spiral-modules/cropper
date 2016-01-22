@@ -69,10 +69,15 @@ Crop.prototype._construct = function (sf, node, options) {
     this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
     this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
     this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
-    if (this.els.cropSave) this.els.cropSave.innerText = this.options.saveBtnText;
+    if (this.els.cropSave) {
+        this.els.cropSave.innerText = this.options.saveBtnText;
+        this.options.customBtnClass ? this.els.cropSave.classList.add(this.options.customBtnClass) : '';
+    }
     this.els.closePopup = this.els.modal.getElementsByClassName("sf-crop-close")[0];
-    if (this.els.closePopup) this.els.closePopup.innerText = this.options.closeBtnText;
-
+    if (this.els.closePopup) {
+        this.els.closePopup.innerText = this.options.closeBtnText;
+        this.options.customBtnClass ? this.els.closePopup.classList.add(this.options.customBtnClass) : '';
+    }
     this.els.cropInfo = {
         ratio: this.els.modal.getElementsByClassName("sf-crop-ratio")[0],
         croppedSize: this.els.modal.getElementsByClassName("sf-crop-cropped-size")[0],
@@ -204,6 +209,12 @@ Crop.prototype.optionsToGrab  = {
     "closeBtnText": {
         "value": "Close",
         "domAttr": "data-closeBtnText"
+    },
+    /**
+     *  Pass custom class to btns <b>Default: ""</b>
+     */
+    "customBtnClass": {
+        "domAttr": "data-customBtnClass"
     },
     /**
      *  Selector of element which twiggers crop-modal <b>Default: ""</b>
