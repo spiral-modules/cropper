@@ -169,7 +169,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.els.imageOriginal = this.els.modal.getElementsByClassName("sf-crop-image-original")[0];
 	    this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
 	    this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
+	    if (this.els.cropSave) this.els.cropSave.innerText = this.options.saveBtnText;
 	    this.els.closePopup = this.els.modal.getElementsByClassName("sf-crop-close")[0];
+	    if (this.els.closePopup) this.els.closePopup.innerText = this.options.closeBtnText;
 	
 	    this.els.cropInfo = {
 	        ratio: this.els.modal.getElementsByClassName("sf-crop-ratio")[0],
@@ -286,6 +288,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "preview": {
 	        "value": "",
 	        "domAttr": "data-preview"
+	    },
+	    /**
+	     *  Save button text <b>Default: "Save"</b>
+	     */
+	    "saveBtnText": {
+	        "value": "Save",
+	        "domAttr": "data-saveBtnText"
+	    },
+	    /**
+	     *  Save button text <b>Default: "Close"</b>
+	     */
+	    "closeBtnText": {
+	        "value": "Close",
+	        "domAttr": "data-closeBtnText"
 	    },
 	    /**
 	     *  Selector of element which twiggers crop-modal <b>Default: ""</b>
@@ -1227,7 +1243,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=sf-crop-modal><div class=sf-crop-modal-body><div class=sf-crop-container><div class=sf-crop-image-original></div><div class=sf-crop-wrapper><div class=sf-crop-dimmers-container><div class=dimmers><div class=\"dimmer dimmer-N\"></div><div class=\"dimmer dimmer-E\"></div><div class=\"dimmer dimmer-S\"></div><div class=\"dimmer dimmer-W\"></div></div></div><div class=sf-crop-elements><div class=\"handler handler-N\"></div><div class=\"handler handler-NE\"></div><div class=\"handler handler-E\"></div><div class=\"handler handler-SE\"></div><div class=\"handler handler-S\"></div><div class=\"handler handler-SW\"></div><div class=\"handler handler-W\"></div><div class=\"handler handler-NW\"></div></div></div></div></div><div class=sf-crop-modal-header><div class=sf-crop-cropper-info><div class=sf-crop-ratio></div><div class=sf-crop-orig-size></div><div class=sf-crop-cropped-size></div></div></div><div class=sf-crop-modal-footer><button class=\"sf-crop-close btn\">Cancel</button> <button type=button class=\"btn sf-crop-save\">Save changes</button></div></div><div class=sf-crop-backdrop></div>";
+	module.exports = "<div class=sf-crop-modal><div class=sf-crop-modal-body><div class=sf-crop-container><div class=sf-crop-image-original></div><div class=sf-crop-wrapper><div class=sf-crop-dimmers-container><div class=dimmers><div class=\"dimmer dimmer-N\"></div><div class=\"dimmer dimmer-E\"></div><div class=\"dimmer dimmer-S\"></div><div class=\"dimmer dimmer-W\"></div></div></div><div class=sf-crop-elements><div class=\"handler handler-N\"></div><div class=\"handler handler-NE\"></div><div class=\"handler handler-E\"></div><div class=\"handler handler-SE\"></div><div class=\"handler handler-S\"></div><div class=\"handler handler-SW\"></div><div class=\"handler handler-W\"></div><div class=\"handler handler-NW\"></div></div></div></div></div><div class=sf-crop-modal-header><div class=sf-crop-cropper-info><div class=sf-crop-ratio></div><div class=sf-crop-orig-size></div><div class=sf-crop-cropped-size></div></div></div><div class=sf-crop-modal-footer><button class=\"sf-crop-close btn\"></button> <button type=button class=\"btn sf-crop-save\"></button></div></div><div class=sf-crop-backdrop></div>";
 
 /***/ },
 /* 7 */
