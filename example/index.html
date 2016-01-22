@@ -18,6 +18,15 @@
     </style>
 </head>
 <body>
+<h1>Styles</h1>
+<div>
+    <input type="file" class="item-input js-sf-cropper"  data-preview="#cropper-preview" data-fileNameSelector=".sf-crop-filename" data-name="test-cropper">
+    <span class="sf-crop-filename"></span>
+    <div id="cropper-preview" style="text-align: center;"></div>
+</div>
+<br>
+<br>
+<br>
 <h1>Crop example</h1>
 <div style="margin-bottom: 20px; display: flex;">
     <form class="js-sf-form" action="action.php">
@@ -35,6 +44,21 @@
         <button class="crop-adjust">Adjust cropping</button>
         <input type="submit" value="Submit form"/>
     </form>
+
+    <form class="js-sf-form" action="action.php">
+        <h1>Custom filename container</h1>
+        <input type="file" data-fileNameSelector=".filename" data-name="test" class="js-sf-cropper"  data-adjust=".crop-adjust2"
+               data-preview=".crop-preview-2" data-ajaximage="image.jpg"/>
+        <div class="crop-preview-2 crop-preview"></div>
+        <button class="crop-adjust2">Adjust cropping</button>
+        <input type="submit" value="Submit form"/>
+        <br>
+        <br>
+        <span>Here goes filename:</span>
+        <b><span class="filename"></span></b>
+    </form>
+    <form.cropper label="Test Image Cropper" name="image" data-preview="#cropper-preview"/>
 </div>
+
 </body>
 </html>

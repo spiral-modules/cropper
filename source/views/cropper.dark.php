@@ -6,7 +6,7 @@
 </block:resources>
 
 <block:body>
-    <label class="item-form ${wrapper-class}" node:attributes="prefix:wrapper">
+    <label class="item-form item-file ${wrapper-class}" node:attributes="prefix:wrapper">
         <?php #compiled
         //Receiving label content as evaluator variable
         $this->evaluatorVariable('label', '${label}');
@@ -19,7 +19,8 @@
         }
         ?>
         <block:input-body>
-            <input type="file" class="item-input js-sf-cropper" data-name="${name|data-name}" node:attributes>
+            <input type="file" class="item-input js-sf-cropper" data-fileNameSelector=".sf-crop-filename" data-name="${name|data-name}" node:attributes>
+            <span class="sf-crop-filename"></span>
         </block:input-body>
     </label>
 </block:body>

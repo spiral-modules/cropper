@@ -50,6 +50,12 @@ Crop.prototype._construct = function (sf, node, options) {
         modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.firstChild
     };
 
+    if (this.options.fileNameSelector) {
+        this.options.fileNameSelector.charAt(0) === " "
+            ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)
+            : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector);
+    }
+
     if (this.options.preview) {this.els.preview = document.querySelector(this.options.preview);} else {
         console.warn('Cropper: no preview provided');
     }
@@ -158,6 +164,12 @@ Crop.prototype.optionsToGrab  = {
     "ratio": {
         "value": false,
         "domAttr": "data-ratio"
+    },
+    /**
+     *  Node selector to place filename. If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
+     */
+    "fileNameSelector": {
+        "domAttr": "data-fileNameSelector"
     },
     /**
      *  What info to show <b>Default: []</b></br>
@@ -402,6 +414,7 @@ Crop.prototype.handleFileSelect = function (file) {
                 name: encodeURIComponent(theFile.name ? theFile.name : that.options.ajaximage.replace(/^.*[\\\/]/, '')),
                 base64: e.target.result
             };
+            if (that.els.filenameContainer) that.els.filenameContainer.innerText = that.file.name;
             that.img = new Image();
             that.img.src = that.file.base64;
             that.img.onload = function () {
