@@ -4,8 +4,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 20px;
-  background-color: red;
-  box-shadow: 0 0 3px black;
+  background-color: #FFFFFF;
   overflow: auto;
   z-index: 1000;
   width: auto;
@@ -19,21 +18,31 @@
 }
 .sf-crop-modal.visible {
   opacity: 1;
+  z-index: 1001;
 }
-.sf-crop-modal .sf-crop-save {
-  display: block;
-  margin: 0 auto;
+.sf-crop-modal .sf-crop-modal-footer {
+  padding-top: 20px;
+  text-align: right;
+}
+.sf-crop-modal .btn {
+  display: inline-block;
+  margin: 0 0 0 10px;
   border-width: 0;
   border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  background-color: #468EBE;
-  color: #ecf0f1;
-  transition: background-color 0.3s;
+  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.2);
+  color: #4a4a4a;
+  background: #fff;
   outline: none;
 }
-.sf-crop-modal .sf-crop-save:hover,
-.sf-crop-modal .sf-crop-save:focus {
-  background-color: #2778AE;
+.sf-crop-modal .btn:hover,
+.sf-crop-modal .btn:focus {
+  background-color: #efefef;
+}
+.sf-crop-modal .btn.sf-crop-save {
+  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.6);
+}
+.sf-crop-modal .btn.sf-crop-close {
+  color: #8a8a8a;
 }
 .sf-crop-modal .sf-crop-container {
   position: relative;
@@ -156,9 +165,6 @@
   margin-left: -6px;
   cursor: nw-resize;
 }
-.sf-crop-modal .sf-crop-modal-header {
-  margin-bottom: 20px;
-}
 .sf-crop-modal .sf-crop-modal-header .sf-crop-cropper-info {
   font-size: 12px;
 }
@@ -188,4 +194,5 @@
 }
 .sf-crop-backdrop.visible {
   opacity: 0.4;
+  z-index: 1000;
 }
