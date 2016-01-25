@@ -22,23 +22,26 @@
 <div style="margin-bottom: 20px; display: flex;">
     <form class="js-sf-form" action="action.php">
         <h1>Minimal crop demo with custom template</h1>
-        <input type="file" data-name="test" class="js-sf-cropper" data-preview="#crop-preview-2" data-template='<?=include('customTemplate.html');?>'/>
+        <input type="file" data-name="test1" class="js-sf-cropper" data-preview="#crop-preview-2" data-template='<?=include('customTemplate.html');?>'/>
         <div id="crop-preview-2" class="crop-preview"></div>
         <input type="submit" value="Submit form"/>
     </form>
 
     <form class="js-sf-form" action="action.php">
         <h1>Crop demo with different settings</h1>
-        <input type="file" data-name="test" class="js-sf-cropper" data-info="ratio,croppedSize,origSize" data-format="full" data-adjust=" .crop-adjust"
+        <input type="file" data-name="test2" class="js-sf-cropper" data-info="ratio,croppedSize,origSize"  data-adjust=" .crop-adjust"
                data-preview=".crop-preview-1" data-ajax-image="image.jpg"/>
         <div class="crop-preview-1 crop-preview"></div>
+        <input type="file" data-name="test22" class="js-sf-cropper" data-info="ratio,croppedSize,origSize"
+               data-preview=".crop-preview-2" data-ajax-image="image.jpg"/>
+        <div class="crop-preview-2 crop-preview"></div>
 
         <input type="submit" value="Submit form"/>
     </form>
 
     <form class="js-sf-form" action="action.php">
         <h1>Custom filename container</h1>
-        <input type="file" data-filename-selector=".filename" data-name="test" class="js-sf-cropper"  data-adjust=".crop-adjust2"
+        <input type="file" data-filename-selector=".filename" data-name="test3" class="js-sf-cropper"  data-adjust=".crop-adjust2"
                data-preview=".crop-preview-2" data-ajax-image="image.jpg"/>
         <div class="crop-preview-2 crop-preview"></div>
         <input type="submit" value="Submit form"/>

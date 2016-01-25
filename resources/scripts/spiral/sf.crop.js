@@ -1191,20 +1191,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Crop.prototype.attachData = function () {
 	    var that = this;
-	    if (this.form) {
-	        if (this.options.format == "cropped") {
-	            this.form.events.on("beforeSend", function (options) {
-	                options.data.append(that.options.name, that.file.blob, that.file.name);
-	            });
-	        } else {
-	            this.form.events.on("beforeSend", function (options) {
-	                options.data.append(that.options.name, that.file.file, that.file.name);
-	                options.data.append(that.options.name + "-cropData[cropWidth]", that.cnv.toSave.w);
-	                options.data.append(that.options.name + "-cropData[cropHeight]", that.cnv.toSave.h);
-	                options.data.append(that.options.name + "-cropData[cropX]", that.cnv.toSave.x);
-	                options.data.append(that.options.name + "-cropData[cropY]", that.cnv.toSave.y);
-	            });
-	        }
+	    if (!this.form) return;
+	
+	    if (this.options.format == "cropped") {
+	        this.form.events.on("beforeSend", function (options) {
+	            if (!that.file) return;
+	            options.data.append(that.options.name, that.file.blob, that.file.name);
+	        });
+	    } else {
+	        this.form.events.on("beforeSend", function (options) {
+	            if (!that.file) return;
+	            options.data.append(that.options.name, that.file.file, that.file.name);
+	            options.data.append(that.options.name + "-cropData[cropWidth]", that.cnv.toSave.w);
+	            options.data.append(that.options.name + "-cropData[cropHeight]", that.cnv.toSave.h);
+	            options.data.append(that.options.name + "-cropData[cropX]", that.cnv.toSave.x);
+	            options.data.append(that.options.name + "-cropData[cropY]", that.cnv.toSave.y);
+	        });
 	    }
 	};
 	
