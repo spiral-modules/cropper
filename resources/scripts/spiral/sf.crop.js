@@ -161,6 +161,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	        console.warn('Cropper: no preview provided');
 	    }
+	    if (this.options.adjust) {
+	        this.els.adjust = this.options.adjust.charAt(0) === " " ? document.querySelector(this.options.adjust) : (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.adjust);
+	    }
 	
 	    if (!this.options.ajaximage && !this.els.input) {
 	        console.warn('Provide file-input to use cropper or load image with ajax (with data-ajaximage attr)');
@@ -315,7 +318,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "domAttr": "data-customBtnClass"
 	    },
 	    /**
-	     *  Selector of element which twiggers crop-modal <b>Default: ""</b>
+	     *  Selector of element which triggers crop-modal <b>Default: ""</b>  If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
 	     */
 	    "adjust": {
 	        "value": "",
