@@ -15,7 +15,7 @@ The code above will be transformed into html and will add required javascript. R
 ```html
 <label class="item-form item-file">
     <span class="item-label">Image Cropper</span>
-    <input type="file" class="item-input js-sf-cropper" data-filenameselector=".sf-crop-filename" data-name="image"
+    <input type="file" class="item-input js-sf-cropper" data-filename-selector=".sf-crop-filename" data-name="image"
            context="" data-preview="#cropper-preview">
     <span class="sf-crop-filename btn">Choose a file...</span>
 </label>
