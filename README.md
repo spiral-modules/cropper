@@ -1,17 +1,24 @@
 # Image Cropper Widget - POST TRANSITION TESTS ARE NOT PERFORMED YET
 Module provides ability to crop user image on client side and send to backend as file stream over ajax call.
 
-## Installation
-TODO
-
 ## Usage Example
 
 At frontend (dark template required), simply add virtual tag to your form:
 
 ```html
 <dark:use bundle="spiral:cropper-bundle"/>
+...
+<form.cropper label="Image Cropper" name="image" data-preview="#cropper-preview"/>
+```
+The code above will be transformed into html and will add required javascript. Result html:
 
-<form.image label="Select Image:" name="image" aspect-ratio=1/>
+```html
+<label class="item-form item-file">
+    <span class="item-label">Image Cropper</span>
+    <input type="file" class="item-input js-sf-cropper" data-filenameselector=".sf-crop-filename" data-name="image"
+           context="" data-preview="#cropper-preview">
+    <span class="sf-crop-filename btn">Choose a file...</span>
+</label>
 ```
 
 Backend:
@@ -23,8 +30,11 @@ public function uploadAction()
 }
 ```
 
-TODO: Add screenshots and GIFs
+Cropper preview:
 
+![cropper-preview](https://cloud.githubusercontent.com/assets/12486924/12550044/470ca044-c372-11e5-8a4f-9699a3a94029.jpg)
+
+## Options
 
 ## Local Development
 
