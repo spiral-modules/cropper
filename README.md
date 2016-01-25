@@ -42,16 +42,16 @@ Cropper preview:
 * **placeholder** - text to pass to filename-container
 * **placeholder-class** - pass a class to filename-container
 * **data-format** - how to send data: cropped or full size with coordinates to crop on server *Default: "cropped" Optional: "full"*
-* **data-ajaximage** - preloading of image through ajax request *Default: "false" Optional: url of image to preload*
+* **data-ajax-image** - preloading of image through ajax request *Default: "false" Optional: url of image to preload*
 * **data-template** - pass custom html template of cropper
-* **data-ajaxAddress** - request address for submitting (if there is no form) *Default: "false" Optional: request URL*
+* **data-ajax-address** - request address for submitting (if there is no form) *Default: "false" Optional: request URL*
 * **data-ratio** - locked aspect ratio *Default: false*
-* **data-fileNameSelector** - node selector to place filename. If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
+* **data-filename-selector** - node selector to place filename. If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
 * **data-info** - what info to show *Default: [] Example: </b> data-info="ratio,origSize,croppedSize"*
 * **data-preview** - selector of preview element *Default: ""*
-* **data-saveBtnText** - save button text *Default: "Save"*
-* **data-closeBtnText** - save button text *Default: "Close"*
-* **data-customBtnClass** - pass custom class to btns *Default: ""*
+* **data-save-btn-text** - save button text *Default: "Save"*
+* **data-close-btn-text** - save button text *Default: "Close"*
+* **data-custom-btn-class** - pass custom class to btns *Default: ""*
 * **data-adjust** - selector of element which triggers crop-modal *Default: ""*  If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
 
 ## Installation
@@ -72,7 +72,7 @@ Cropper preview:
 
 ### Building
 
-    gulp build - compile and browserify
+    gulp build
     
 
 ## License

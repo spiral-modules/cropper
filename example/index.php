@@ -30,7 +30,7 @@
     <form class="js-sf-form" action="action.php">
         <h1>Crop demo with different settings</h1>
         <input type="file" data-name="test" class="js-sf-cropper" data-info="ratio,croppedSize,origSize" data-format="full" data-adjust=" .crop-adjust"
-               data-preview=".crop-preview-1" data-ajaximage="image.jpg"/>
+               data-preview=".crop-preview-1" data-ajax-image="image.jpg"/>
         <div class="crop-preview-1 crop-preview"></div>
 
         <input type="submit" value="Submit form"/>
@@ -38,8 +38,8 @@
 
     <form class="js-sf-form" action="action.php">
         <h1>Custom filename container</h1>
-        <input type="file" data-fileNameSelector=".filename" data-name="test" class="js-sf-cropper"  data-adjust=".crop-adjust2"
-               data-preview=".crop-preview-2" data-ajaximage="image.jpg"/>
+        <input type="file" data-filename-selector=".filename" data-name="test" class="js-sf-cropper"  data-adjust=".crop-adjust2"
+               data-preview=".crop-preview-2" data-ajax-image="image.jpg"/>
         <div class="crop-preview-2 crop-preview"></div>
         <input type="submit" value="Submit form"/>
         <br>

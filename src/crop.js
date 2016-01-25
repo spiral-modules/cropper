@@ -160,7 +160,7 @@ Crop.prototype.optionsToGrab  = {
      */
     "ajaximage": {
         "value": false,
-        "domAttr": "data-ajaximage"
+        "domAttr": "data-ajax-image"
     },
     /**
      *  Pass custom html template
@@ -173,7 +173,7 @@ Crop.prototype.optionsToGrab  = {
      */
     "ajaxAddress": {
         "value": false,
-        "domAttr": "data-ajaxAddress"
+        "domAttr": "data-ajax-address"
     },
     /**
      *  Locked aspect ratio <b>Default: false</b>
@@ -186,19 +186,18 @@ Crop.prototype.optionsToGrab  = {
      *  Node selector to place filename. If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
      */
     "fileNameSelector": {
-        "domAttr": "data-fileNameSelector"
+        "domAttr": "data-filename-selector"
     },
     /**
      *  What info to show <b>Default: []</b></br>
      *  <b>Example: </b>data-info="ratio,origSize,croppedSize"</br>
-     *  <b>Note: </b>done only ratio
      */
     "info": {
         "value": [],
         "domAttr": "data-info"
     },
     /**
-     *  ID of preview element <b>Default: ""</b>
+     *  Selector of preview element <b>Default: ""</b>
      */
     "preview": {
         "value": "",
@@ -209,20 +208,20 @@ Crop.prototype.optionsToGrab  = {
      */
     "saveBtnText": {
         "value": "Save",
-        "domAttr": "data-saveBtnText"
+        "domAttr": "data-save-btn-text"
     },
     /**
      *  Save button text <b>Default: "Close"</b>
      */
     "closeBtnText": {
         "value": "Close",
-        "domAttr": "data-closeBtnText"
+        "domAttr": "data-close-btn-text"
     },
     /**
      *  Pass custom class to btns <b>Default: ""</b>
      */
     "customBtnClass": {
-        "domAttr": "data-customBtnClass"
+        "domAttr": "data-custom-btn-class"
     },
     /**
      *  Selector of element which triggers crop-modal <b>Default: ""</b>  If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)

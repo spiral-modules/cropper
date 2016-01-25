@@ -19,8 +19,8 @@
         }
         ?>
         <block:input-body>
-            <input type="file" class="item-input js-sf-cropper" data-fileNameSelector=".sf-crop-filename" data-name="${name|data-name}" node:attributes>
-            <span class="sf-crop-filename btn ${placeholderClass}">${placeholder|Choose a file...}</span>
+            <input type="file" class="item-input js-sf-cropper" data-filename-selector=".sf-crop-filename" data-name="${name|data-name}" node:attributes>
+            <span class="sf-crop-filename btn ${placeholder-class}">${placeholder|Choose a file...}</span>
         </block:input-body>
     </label>
 </block:body>
