@@ -21,8 +21,8 @@
 <h1>Crop example</h1>
 <div style="margin-bottom: 20px; display: flex;">
     <form class="js-sf-form" action="action.php">
-        <h1>Minimal crop demo</h1>
-        <input type="file" data-name="test" class="js-sf-cropper" data-preview="#crop-preview-2"/>
+        <h1>Minimal crop demo with custom template</h1>
+        <input type="file" data-name="test" class="js-sf-cropper" data-preview="#crop-preview-2" data-template='<?=include('customTemplate.html');?>'/>
         <div id="crop-preview-2" class="crop-preview"></div>
         <input type="submit" value="Submit form"/>
     </form>

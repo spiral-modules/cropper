@@ -162,6 +162,9 @@ Crop.prototype.optionsToGrab  = {
         "value": false,
         "domAttr": "data-ajaximage"
     },
+    /**
+     *  Pass custom html template
+     */
     "template": {
         "domAttr": "data-template"
     },
