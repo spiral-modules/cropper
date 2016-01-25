@@ -32,7 +32,8 @@ public function uploadAction()
 
 Cropper preview:
 
-![cropper-preview](https://cloud.githubusercontent.com/assets/12486924/12550044/470ca044-c372-11e5-8a4f-9699a3a94029.jpg)
+![cropper-preview](https://cloud.githubusercontent.com/assets/12486924/12550729/ad25ddd8-c376-11e5-80c8-bfba0eba4251.jpg)
+
 
 ## Options
 
