@@ -568,7 +568,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that.cnv.orig.h = that.img.naturalHeight;
 	                that.cnv.orig.w = that.img.naturalWidth;
 	                that.cnv.orig.ratio = that.cnv.orig.w / that.cnv.orig.h;
-	                if (that.cnv.orig.ratio < 1) that.cnv.canvas.w *= that.cnv.orig.ratio; // if image is too narrow -> correct canvas sizes not to exceed display sizes
+	
+	                var screenFillIndex = 0.7; //max coefficient of viewport to be filled with image
+	                if (that.cnv.orig.h < window.innerHeight * screenFillIndex && that.cnv.orig.w < window.innerWidth * screenFillIndex) {
+	                    that.cnv.canvas.w = that.cnv.orig.w; //if image is less than viewport * coeff.
+	                } else {
+	                        //calculate width of canvas to suit the screen best way
+	                        if (that.cnv.orig.ratio > window.innerWidth / window.innerHeight) {
+	                            that.cnv.canvas.w = window.innerWidth * screenFillIndex;
+	                        } else {
+	                            that.cnv.canvas.w = Math.floor(that.cnv.orig.w * window.innerHeight / that.cnv.orig.h) * screenFillIndex;
+	                        }
+	                    }
+	
 	                that.cnv.scale = that.cnv.orig.w / that.cnv.canvas.w;
 	                that.cnv.toSave.w = that.cnv.orig.w;
 	                that.cnv.toSave.h = that.cnv.orig.h;

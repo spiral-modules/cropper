@@ -32,10 +32,6 @@
         <input type="file" data-name="test2" class="js-sf-cropper" data-info="ratio,croppedSize,origSize"  data-adjust=" .crop-adjust"
                data-preview=".crop-preview-1" data-ajax-image="image.jpg"/>
         <div class="crop-preview-1 crop-preview"></div>
-        <input type="file" data-name="test22" class="js-sf-cropper" data-info="ratio,croppedSize,origSize"
-               data-preview=".crop-preview-2" data-ajax-image="image.jpg"/>
-        <div class="crop-preview-2 crop-preview"></div>
-
         <input type="submit" value="Submit form"/>
     </form>
 
