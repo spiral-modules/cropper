@@ -347,7 +347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        start: {
 	            crop: { x: 0, y: 0, w: 0, h: 0 }
 	        },
-	        canvas: { w: 538, h: 0 },
+	        canvas: { w: 0, h: 0 }, //calculates on file handling
 	        orig: {},
 	        preview: { w: 0, h: 0 },
 	        scale: 1
@@ -510,9 +510,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.els.backdrop.addEventListener("click", this._hidePopup);
 	    this.els.cropSave.addEventListener("click", this._cropSave);
 	    this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
+	    this.els.cropWrapper.addEventListener("touchstart", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
+	    this.els.cropWrapper.addEventListener("touchend", this._cropWrapperMouseUp);
 	    document.addEventListener("mousemove", this._documentMouseMove);
+	    document.addEventListener("touchmove", this._documentMouseMove);
 	    document.addEventListener("mouseup", this._documentMouseUp);
+	    document.addEventListener("touchend", this._documentMouseUp);
 	};
 	
 	Crop.prototype.removeModalEventListeners = function () {
@@ -661,12 +665,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Event} e
 	 */
 	Crop.prototype.onCropStart = function (e) {
+	    if (e.type === "touchstart") e = e.touches[0];
 	    this.els.handlers.current = e.target;
 	    this.cnv.offset = this.els.cropWrapper.getBoundingClientRect();
 	    this.cnv.cursor.x = Math.round(e.clientX - this.cnv.offset.left);
 	    this.cnv.cursor.y = Math.round(e.clientY - this.cnv.offset.top);
-	    this.cnv.cursor.offsetX = e.offsetX === undefined ? Math.round(e.layerX) : Math.round(e.offsetX);
-	    this.cnv.cursor.offsetY = e.offsetY === undefined ? Math.round(e.layerY) : Math.round(e.offsetY);
+	    this.cnv.cursor.offsetX = e.offsetX === undefined ? e.layerX ? Math.round(e.layerX) : e.pageX - e.target.getBoundingClientRect().left : Math.round(e.offsetX);
+	    this.cnv.cursor.offsetY = e.offsetY === undefined ? e.layerY ? Math.round(e.layerY) : e.pageY - e.target.getBoundingClientRect().top : Math.round(e.offsetY);
 	};
 	
 	/**
@@ -675,6 +680,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Crop.prototype.onCrop = function (e) {
 	    if (!this.els.handlers.current) return;
+	    if (e.type === "touchmove") e = e.touches[0];
 	    this.cnv.cursor.x = Math.round(e.clientX - this.cnv.offset.left);
 	    this.cnv.cursor.y = Math.round(e.clientY - this.cnv.offset.top);
 	    switch (this.els.handlers.current) {
