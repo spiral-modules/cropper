@@ -431,9 +431,13 @@ Crop.prototype.removeModalEventListeners = function () {
     this.els.backdrop.removeEventListener("click", this._hidePopup);
     this.els.cropSave.removeEventListener("click", this._cropSave);
     this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
+    this.els.cropWrapper.removeEventListener("touchstart", this._cropWrapperMouseDown);
     this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
+    this.els.cropWrapper.removeEventListener("touchend", this._cropWrapperMouseUp);
     document.removeEventListener("mousemove", this._documentMouseMove);
+    document.removeEventListener("touchmove", this._documentMouseMove);
     document.removeEventListener("mouseup", this._documentMouseUp);
+    document.removeEventListener("touchend", this._documentMouseUp);
 };
 
 /**
