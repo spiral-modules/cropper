@@ -1247,17 +1247,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    function performImageAdjustments() {
 	        try {
-	            c.width = that.cnv.orig.w;
-	            c.height = that.cnv.orig.h;
+	            var sx = that.cnv.toSave.x,
+	                //The x coordinate where to start clipping
+	            sy = that.cnv.toSave.y,
+	                //The y coordinate where to start clipping
+	            swidth = that.cnv.toSave.w,
+	                //The width of the clipped image
+	            sheight = that.cnv.toSave.h,
+	                //The height of the clipped image
+	            //x = that.cnv.toSave.w * (that.cnv.adjustments.flip.horizontally ? -1 : 0), //The x coordinate where to place the image on the canvas
+	            //y = that.cnv.toSave.h * (that.cnv.adjustments.flip.vertically ? -1 : 0), //	The y coordinate where to place the image on the canvas
+	            width = that.cnv.toSave.w,
+	                //The width of the image to use (stretch or reduce the image)
+	            height = that.cnv.toSave.h; //The height of the image to use (stretch or reduce the image)
+	            c.width = that.cnv.toSave.w;
+	            c.height = that.cnv.toSave.h;
 	            ctx.save(); // Save the current state
 	            ctx.scale(that.cnv.adjustments.flip.horizontally ? -1 : 1, that.cnv.adjustments.flip.vertically ? -1 : 1); // Set scale to flip the image
-	            ctx.drawImage(that.img, that.cnv.orig.w * (that.cnv.adjustments.flip.horizontally ? -1 : 0), that.cnv.orig.h * (that.cnv.adjustments.flip.vertically ? -1 : 0), that.cnv.orig.w, that.cnv.orig.h);
+	            //ctx.drawImage(that.img, that.cnv.orig.w * (that.cnv.adjustments.flip.horizontally ? -1 : 0), that.cnv.orig.h * (that.cnv.adjustments.flip.vertically ? -1 : 0), that.cnv.orig.w, that.cnv.orig.h);
+	            //        ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
+	            ctx.translate(0, 0);
+	            ctx.drawImage(that.img, sx, sy, swidth, sheight, 0, 0, width, height);
 	            ctx.restore();
 	            that.strDataURI = c.toDataURL("image/jpeg", 1);
 	            img.src = that.strDataURI; //this img will be processed in performImageCropping
-	            performImageCropping();
+	
+	            that.setPreviewImage(img);
+	            that.file.blob = that.dataURItoBlob(that.strDataURI);
 	        } catch (e) {
-	            console.log('69');
 	            if (e.name == "NS_ERROR_NOT_AVAILABLE") {
 	                setTimeout(performImageAdjustments, 0);
 	            } else {
@@ -1266,25 +1283,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	
-	    function performImageCropping() {
-	        try {
-	            c.width = that.cnv.toSave.w;
-	            c.height = that.cnv.toSave.h;
-	            ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
-	            that.strDataURI = c.toDataURL("image/jpeg", 0.95);
-	            img.src = that.strDataURI;
-	
-	            that.setPreviewImage(img);
-	            that.file.blob = that.dataURItoBlob(that.strDataURI);
-	        } catch (e) {
-	            console.log('88');
-	            if (e.name == "NS_ERROR_NOT_AVAILABLE") {
-	                setTimeout(performImageCropping, 0);
-	            } else {
-	                throw e;
-	            }
-	        }
-	    }
+	    //function performImageCropping() {
+	    //    try {
+	    //        c.width = that.cnv.toSave.w;
+	    //        c.height = that.cnv.toSave.h;
+	    //        ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
+	    //        that.strDataURI = c.toDataURL("image/jpeg", 0.95);
+	    //        img.src = that.strDataURI;
+	    //
+	    //        that.setPreviewImage(img);
+	    //        that.file.blob = that.dataURItoBlob(that.strDataURI);
+	    //    } catch (e) {
+	    //        if (e.name == "NS_ERROR_NOT_AVAILABLE") {
+	    //            setTimeout(performImageCropping, 0);
+	    //        } else {
+	    //            throw e;
+	    //        }
+	    //    }
+	    //}
 	};
 	
 	/**
