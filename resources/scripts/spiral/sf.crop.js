@@ -173,12 +173,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.els.cropElements = this.els.modal.getElementsByClassName("sf-crop-elements")[0];
 	    this.els.cropSave = this.els.modal.getElementsByClassName("sf-crop-save")[0];
 	    if (this.els.cropSave) {
-	        this.els.cropSave.innerText = this.options.saveBtnText;
+	        this.els.cropSave.innerHTML = this.options.saveBtnText;
 	        this.options.customBtnClass ? this.els.cropSave.classList.add(this.options.customBtnClass) : '';
 	    }
 	    this.els.closePopup = this.els.modal.getElementsByClassName("sf-crop-close")[0];
 	    if (this.els.closePopup) {
-	        this.els.closePopup.innerText = this.options.closeBtnText;
+	        this.els.closePopup.innerHTML = this.options.closeBtnText;
 	        this.options.customBtnClass ? this.els.closePopup.classList.add(this.options.customBtnClass) : '';
 	    }
 	    this.els.cropInfo = {
