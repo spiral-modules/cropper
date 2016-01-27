@@ -1240,17 +1240,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        x: Math.round(this.cnv.crop.x * this.cnv.scale),
 	        y: Math.round(this.cnv.crop.y * this.cnv.scale)
 	    };
-	    /*flip logic. here will go other filters logic (everything before cropping)*/
-	    //todo black square bug
-	    img.src = performImageAdjustments(); //this img will be processed in performImageCropping
-	    /**/
+	    /* image adjustments*/ //todo black square bug
+	    performImageAdjustments();
 	
-	    performImageCropping();
-	    this.strDataURI = c.toDataURL("image/jpeg", 0.95);
-	    img.src = this.strDataURI;
-	
-	    this.setPreviewImage(img);
-	    this.file.blob = this.dataURItoBlob(this.strDataURI);
+	    /* image cropping*/
 	
 	    function performImageAdjustments() {
 	        try {
@@ -1260,8 +1253,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            ctx.scale(that.cnv.adjustments.flip.horizontally ? -1 : 1, that.cnv.adjustments.flip.vertically ? -1 : 1); // Set scale to flip the image
 	            ctx.drawImage(that.img, that.cnv.orig.w * (that.cnv.adjustments.flip.horizontally ? -1 : 0), that.cnv.orig.h * (that.cnv.adjustments.flip.vertically ? -1 : 0), that.cnv.orig.w, that.cnv.orig.h);
 	            ctx.restore();
-	            return c.toDataURL("image/jpeg", 1);
+	            that.strDataURI = c.toDataURL("image/jpeg", 1);
+	            img.src = that.strDataURI; //this img will be processed in performImageCropping
+	            performImageCropping();
 	        } catch (e) {
+	            console.log('69');
 	            if (e.name == "NS_ERROR_NOT_AVAILABLE") {
 	                setTimeout(performImageAdjustments, 0);
 	            } else {
@@ -1275,7 +1271,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            c.width = that.cnv.toSave.w;
 	            c.height = that.cnv.toSave.h;
 	            ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
+	            that.strDataURI = c.toDataURL("image/jpeg", 0.95);
+	            img.src = that.strDataURI;
+	
+	            that.setPreviewImage(img);
+	            that.file.blob = that.dataURItoBlob(that.strDataURI);
 	        } catch (e) {
+	            console.log('88');
 	            if (e.name == "NS_ERROR_NOT_AVAILABLE") {
 	                setTimeout(performImageCropping, 0);
 	            } else {
