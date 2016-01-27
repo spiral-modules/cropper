@@ -599,24 +599,34 @@ Crop.prototype.prepare = function () {
 
  */
 Crop.prototype.flipImage = function (flipH, flipV) {
-    var that = this;
-    var canvas = this.els.modal.getElementsByTagName('canvas')[0];
+    var that = this,
+        canvas = this.els.modal.getElementsByTagName('canvas')[0];
     if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-
-    var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+    var ctx = canvas.getContext('2d'),
+        scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
         scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
         posX = flipH ? this.cnv.image.w * -1 : 0, // Set x position to -100% if flip horizontal
         posY = flipV ? this.cnv.image.h * -1 : 0; // Set y position to -100% if flip vertical
 
-    ctx.save(); // Save the current state
-    ctx.scale(scaleH, scaleV); // Set scale to flip the image
-    ctx.drawImage(that.img, posX, posY, that.cnv.image.w, that.cnv.image.h); // draw the image todo take in try
-    ctx.restore(); // Restore the last saved state
+    performPreviewAdjustments();
 
     this.cnv.adjustments.flip.horizontally = flipH;
     this.cnv.adjustments.flip.vertically = flipV;
 
+    function performPreviewAdjustments() {
+        try {
+            ctx.save(); // Save the current state
+            ctx.scale(scaleH, scaleV); // Set scale to flip the image
+            ctx.drawImage(that.img, posX, posY, that.cnv.image.w, that.cnv.image.h);
+            ctx.restore(); // Restore the last saved state
+        } catch (e) {
+            if (e.name == "NS_ERROR_NOT_AVAILABLE") {
+                setTimeout(performPreviewAdjustments, 0);
+            } else {
+                throw e;
+            }
+        }
+    }
 };
 
 /**
@@ -1135,41 +1145,49 @@ Crop.prototype.save = function () {
         x: Math.round(this.cnv.crop.x * this.cnv.scale),
         y: Math.round(this.cnv.crop.y * this.cnv.scale)
     };
-/*flip logic. here will go other filters logic (everything before cropping)*/
-    //todo drawimage in try, black square bug
-    c.width = this.cnv.orig.w;
-    c.height = this.cnv.orig.h;
-    ctx.save(); // Save the current state
-    ctx.scale(this.cnv.adjustments.flip.horizontally ? -1 : 1, this.cnv.adjustments.flip.vertically ? -1 : 1); // Set scale to flip the image
-    ctx.drawImage(this.img, this.cnv.orig.w * (this.cnv.adjustments.flip.horizontally ? -1 : 0), this.cnv.orig.h * (this.cnv.adjustments.flip.vertically ? -1 : 0), that.cnv.orig.w, that.cnv.orig.h); // draw the image todo take in try
-    ctx.restore();
+    /* image adjustments*/ //todo black square bug
+    img.src = performImageAdjustments(); //this img will be processed in performImageCropping
 
-    this.strDataURI = c.toDataURL("image/jpeg", 1);
+    /* image cropping*/
+    performImageCropping();
+    this.strDataURI = c.toDataURL("image/jpeg", 0.95);
     img.src = this.strDataURI;
-/**/
 
-    c.width = this.cnv.toSave.w;
-    c.height = this.cnv.toSave.h;
+    this.setPreviewImage(img);
+    this.file.blob = this.dataURItoBlob(this.strDataURI);
 
-    function drawImageOnCanvas() {
+    function performImageAdjustments() {
         try {
-            ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
+            c.width = that.cnv.orig.w;
+            c.height = that.cnv.orig.h;
+            ctx.save(); // Save the current state
+            ctx.scale(that.cnv.adjustments.flip.horizontally ? -1 : 1, that.cnv.adjustments.flip.vertically ? -1 : 1); // Set scale to flip the image
+            ctx.drawImage(that.img, that.cnv.orig.w * (that.cnv.adjustments.flip.horizontally ? -1 : 0), that.cnv.orig.h * (that.cnv.adjustments.flip.vertically ? -1 : 0), that.cnv.orig.w, that.cnv.orig.h);
+            ctx.restore();
+            return c.toDataURL("image/jpeg", 1);
         } catch (e) {
             if (e.name == "NS_ERROR_NOT_AVAILABLE") {
-                setTimeout(drawImageOnCanvas, 0);
+                setTimeout(performImageAdjustments, 0);
             } else {
                 throw e;
             }
         }
     }
 
-    drawImageOnCanvas();
-    this.strDataURI = c.toDataURL("image/jpeg", 0.95);
+    function performImageCropping() {
+        try {
+            c.width = that.cnv.toSave.w;
+            c.height = that.cnv.toSave.h;
+            ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
+        } catch (e) {
+            if (e.name == "NS_ERROR_NOT_AVAILABLE") {
+                setTimeout(performImageCropping, 0);
+            } else {
+                throw e;
+            }
+        }
+    }
 
-    img.src = this.strDataURI;
-
-    this.setPreviewImage(img);
-    this.file.blob = this.dataURItoBlob(this.strDataURI);
 };
 
 /**
