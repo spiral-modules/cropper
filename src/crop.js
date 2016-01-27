@@ -1128,20 +1128,32 @@ Crop.prototype.save = function () {
     var that = this;
     var c = document.createElement("canvas"),
         ctx = c.getContext("2d"),
-        img;
+        img = new Image();
     this.cnv.toSave = {//CoordinateS
         w: Math.round(this.cnv.crop.w * this.cnv.scale),
         h: Math.round(this.cnv.crop.h * this.cnv.scale),
         x: Math.round(this.cnv.crop.x * this.cnv.scale),
         y: Math.round(this.cnv.crop.y * this.cnv.scale)
     };
+/*flip logic. here will go other filters logic (everything before cropping)*/
+    //todo drawimage in try, black square bug
+    c.width = this.cnv.orig.w;
+    c.height = this.cnv.orig.h;
+    ctx.save(); // Save the current state
+    ctx.scale(this.cnv.adjustments.flip.horizontally ? -1 : 1, this.cnv.adjustments.flip.vertically ? -1 : 1); // Set scale to flip the image
+    ctx.drawImage(this.img, this.cnv.orig.w * (this.cnv.adjustments.flip.horizontally ? -1 : 0), this.cnv.orig.h * (this.cnv.adjustments.flip.vertically ? -1 : 0), that.cnv.orig.w, that.cnv.orig.h); // draw the image todo take in try
+    ctx.restore();
+
+    this.strDataURI = c.toDataURL("image/jpeg", 1);
+    img.src = this.strDataURI;
+/**/
 
     c.width = this.cnv.toSave.w;
     c.height = this.cnv.toSave.h;
 
-    function drawImageOnCanvas() {//TODO refactor this piece. Almost the same as in prepare().
+    function drawImageOnCanvas() {
         try {
-            ctx.drawImage(that.img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
+            ctx.drawImage(img, that.cnv.toSave.x, that.cnv.toSave.y, that.cnv.toSave.w, that.cnv.toSave.h, 0, 0, that.cnv.toSave.w, that.cnv.toSave.h);
         } catch (e) {
             if (e.name == "NS_ERROR_NOT_AVAILABLE") {
                 setTimeout(drawImageOnCanvas, 0);
@@ -1154,7 +1166,6 @@ Crop.prototype.save = function () {
     drawImageOnCanvas();
     this.strDataURI = c.toDataURL("image/jpeg", 0.95);
 
-    img = new Image();
     img.src = this.strDataURI;
 
     this.setPreviewImage(img);
