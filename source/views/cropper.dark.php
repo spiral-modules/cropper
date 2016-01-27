@@ -6,7 +6,8 @@
 </block:resources>
 
 <block:body>
-    <label class="item-form item-file ${wrapper-class}" node:attributes="prefix:wrapper">
+    <?/* data-message-placeholder="${name}" is there to show errors messages, as input doesn't have attribute name*/?>
+    <label class="item-form item-file ${wrapper-class}" data-message-placeholder="${name}" node:attributes="prefix:wrapper">
         <?php #compiled
         //Receiving label content as evaluator variable
         $this->evaluatorVariable('label', '${label}');
@@ -19,7 +20,8 @@
         }
         ?>
         <block:input-body>
-            <input type="file" class="item-input js-sf-cropper" data-filename-selector=".sf-crop-filename" data-name="${name|data-name}" node:attributes>
+            <input type="file" class="item-input js-sf-cropper"
+                   data-filename-selector=".sf-crop-filename" data-name="${name}" node:attributes>
             <span class="sf-crop-filename btn ${placeholder-class}">${placeholder|Choose a file...}</span>
         </block:input-body>
     </label>
