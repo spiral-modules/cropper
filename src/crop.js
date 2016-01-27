@@ -83,6 +83,9 @@ Crop.prototype._construct = function (sf, node, options) {
         this.els.closePopup.innerText = this.options.closeBtnText;
         this.options.customBtnClass ? this.els.closePopup.classList.add(this.options.customBtnClass) : '';
     }
+    this.els.flipHorizontally = this.els.modal.getElementsByClassName("sf-crop-flip-horizontally")[0];
+    this.els.flipVertically = this.els.modal.getElementsByClassName("sf-crop-flip-vertically")[0];
+
     this.els.cropInfo = {
         ratio: this.els.modal.getElementsByClassName("sf-crop-ratio")[0],
         croppedSize: this.els.modal.getElementsByClassName("sf-crop-cropped-size")[0],
@@ -245,6 +248,12 @@ Crop.prototype.reset = function () {
         crop: {x: 0, y: 0, x2: 0, y2: 0, w: 0, h: 0},
         toSave: {x: 0, y: 0, w: 0, h: 0},
         image: {w: 0, h: 0},
+        adjustments: {
+            flip: {
+                vertically: false,
+                horizontally: false
+            }
+        },
         old: {
             cursor: {x: 0, y: 0}
         },
@@ -413,9 +422,19 @@ Crop.prototype.addModalEventListeners = function () {
         that.onCropEnd();
         that.inCropping = false;
     };
+
+    this._flipImageHorizontally = function(){
+        that.flipImage(!that.cnv.adjustments.flip.horizontally, that.cnv.adjustments.flip.vertically);
+    };
+    this._flipImageVertically = function(){
+        that.flipImage(that.cnv.adjustments.flip.horizontally, !that.cnv.adjustments.flip.vertically);
+    };
+
     this.els.closePopup.addEventListener("click", this._hidePopup);
     this.els.backdrop.addEventListener("click", this._hidePopup);
     this.els.cropSave.addEventListener("click", this._cropSave);
+    if (this.els.flipHorizontally) this.els.flipHorizontally.addEventListener("click", this._flipImageHorizontally);
+    if (this.els.flipVertically) this.els.flipVertically.addEventListener("click", this._flipImageVertically);
     this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
     this.els.cropWrapper.addEventListener("touchstart", this._cropWrapperMouseDown);
     this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
@@ -430,6 +449,8 @@ Crop.prototype.removeModalEventListeners = function () {
     this.els.closePopup.removeEventListener("click", this._hidePopup);
     this.els.backdrop.removeEventListener("click", this._hidePopup);
     this.els.cropSave.removeEventListener("click", this._cropSave);
+    if (this.els.flipHorizontally) this.els.flipHorizontally.removeEventListener("click", this._flipImageHorizontally);
+    if (this.els.flipVertically) this.els.flipVertically.removeEventListener("click", this._flipImageVertically);
     this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
     this.els.cropWrapper.removeEventListener("touchstart", this._cropWrapperMouseDown);
     this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
@@ -571,6 +592,31 @@ Crop.prototype.prepare = function () {
 
         that.readyToPrepare = false;
     }, 50);
+};
+
+/**
+ * flip image vertically or horizontally
+
+ */
+Crop.prototype.flipImage = function (flipH, flipV) {
+    var that = this;
+    var canvas = this.els.modal.getElementsByTagName('canvas')[0];
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+
+    var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+        scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
+        posX = flipH ? this.cnv.image.w * -1 : 0, // Set x position to -100% if flip horizontal
+        posY = flipV ? this.cnv.image.h * -1 : 0; // Set y position to -100% if flip vertical
+
+    ctx.save(); // Save the current state
+    ctx.scale(scaleH, scaleV); // Set scale to flip the image
+    ctx.drawImage(that.img, posX, posY, that.cnv.image.w, that.cnv.image.h); // draw the image todo take in try
+    ctx.restore(); // Restore the last saved state
+
+    this.cnv.adjustments.flip.horizontally = flipH;
+    this.cnv.adjustments.flip.vertically = flipV;
+
 };
 
 /**

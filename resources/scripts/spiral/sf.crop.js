@@ -181,6 +181,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.els.closePopup.innerText = this.options.closeBtnText;
 	        this.options.customBtnClass ? this.els.closePopup.classList.add(this.options.customBtnClass) : '';
 	    }
+	    this.els.flipHorizontally = this.els.modal.getElementsByClassName("sf-crop-flip-horizontally")[0];
+	    this.els.flipVertically = this.els.modal.getElementsByClassName("sf-crop-flip-vertically")[0];
+	
 	    this.els.cropInfo = {
 	        ratio: this.els.modal.getElementsByClassName("sf-crop-ratio")[0],
 	        croppedSize: this.els.modal.getElementsByClassName("sf-crop-cropped-size")[0],
@@ -341,6 +344,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        crop: { x: 0, y: 0, x2: 0, y2: 0, w: 0, h: 0 },
 	        toSave: { x: 0, y: 0, w: 0, h: 0 },
 	        image: { w: 0, h: 0 },
+	        adjustments: {
+	            flip: {
+	                vertically: false,
+	                horizontally: false
+	            }
+	        },
 	        old: {
 	            cursor: { x: 0, y: 0 }
 	        },
@@ -506,9 +515,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        that.onCropEnd();
 	        that.inCropping = false;
 	    };
+	
+	    this._flipImageHorizontally = function () {
+	        that.flipImage(!that.cnv.adjustments.flip.horizontally, that.cnv.adjustments.flip.vertically);
+	    };
+	    this._flipImageVertically = function () {
+	        that.flipImage(that.cnv.adjustments.flip.horizontally, !that.cnv.adjustments.flip.vertically);
+	    };
+	
 	    this.els.closePopup.addEventListener("click", this._hidePopup);
 	    this.els.backdrop.addEventListener("click", this._hidePopup);
 	    this.els.cropSave.addEventListener("click", this._cropSave);
+	    if (this.els.flipHorizontally) this.els.flipHorizontally.addEventListener("click", this._flipImageHorizontally);
+	    if (this.els.flipVertically) this.els.flipVertically.addEventListener("click", this._flipImageVertically);
 	    this.els.cropWrapper.addEventListener("mousedown", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.addEventListener("touchstart", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.addEventListener("mouseup", this._cropWrapperMouseUp);
@@ -523,6 +542,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.els.closePopup.removeEventListener("click", this._hidePopup);
 	    this.els.backdrop.removeEventListener("click", this._hidePopup);
 	    this.els.cropSave.removeEventListener("click", this._cropSave);
+	    if (this.els.flipHorizontally) this.els.flipHorizontally.removeEventListener("click", this._flipImageHorizontally);
+	    if (this.els.flipVertically) this.els.flipVertically.removeEventListener("click", this._flipImageVertically);
 	    this.els.cropWrapper.removeEventListener("mousedown", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.removeEventListener("touchstart", this._cropWrapperMouseDown);
 	    this.els.cropWrapper.removeEventListener("mouseup", this._cropWrapperMouseUp);
@@ -662,6 +683,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        that.readyToPrepare = false;
 	    }, 50);
+	};
+	
+	/**
+	 * flip image vertically or horizontally
+	
+	 */
+	Crop.prototype.flipImage = function (flipH, flipV) {
+	    var that = this;
+	    var canvas = this.els.modal.getElementsByTagName('canvas')[0];
+	    if (!canvas) return;
+	    var ctx = canvas.getContext('2d');
+	
+	    var scaleH = flipH ? -1 : 1,
+	        // Set horizontal scale to -1 if flip horizontal
+	    scaleV = flipV ? -1 : 1,
+	        // Set verical scale to -1 if flip vertical
+	    posX = flipH ? this.cnv.image.w * -1 : 0,
+	        // Set x position to -100% if flip horizontal
+	    posY = flipV ? this.cnv.image.h * -1 : 0; // Set y position to -100% if flip vertical
+	
+	    ctx.save(); // Save the current state
+	    ctx.scale(scaleH, scaleV); // Set scale to flip the image
+	    ctx.drawImage(that.img, posX, posY, that.cnv.image.w, that.cnv.image.h); // draw the image todo take in try
+	    ctx.restore(); // Restore the last saved state
+	
+	    this.cnv.adjustments.flip.horizontally = flipH;
+	    this.cnv.adjustments.flip.vertically = flipV;
 	};
 	
 	/**
@@ -1283,7 +1331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=sf-crop-modal><div class=sf-crop-modal-body><div class=sf-crop-container><div class=sf-crop-image-original></div><div class=sf-crop-wrapper><div class=sf-crop-dimmers-container><div class=dimmers><div class=\"dimmer dimmer-n\"></div><div class=\"dimmer dimmer-e\"></div><div class=\"dimmer dimmer-s\"></div><div class=\"dimmer dimmer-w\"></div></div></div><div class=sf-crop-elements><div class=\"handler handler-n\"></div><div class=\"handler handler-ne\"></div><div class=\"handler handler-e\"></div><div class=\"handler handler-se\"></div><div class=\"handler handler-s\"></div><div class=\"handler handler-sw\"></div><div class=\"handler handler-w\"></div><div class=\"handler handler-nw\"></div></div></div></div></div><div class=sf-crop-modal-header><div class=sf-crop-cropper-info><div class=sf-crop-ratio></div><div class=sf-crop-orig-size></div><div class=sf-crop-cropped-size></div></div></div><div class=sf-crop-modal-footer><button class=\"sf-crop-close btn\"></button> <button type=button class=\"btn sf-crop-save\"></button></div></div><div class=sf-crop-backdrop></div>";
+	module.exports = "<div class=sf-crop-modal><div class=sf-crop-modal-body><div class=sf-crop-container><div class=sf-crop-image-original></div><div class=sf-crop-wrapper><div class=sf-crop-dimmers-container><div class=dimmers><div class=\"dimmer dimmer-n\"></div><div class=\"dimmer dimmer-e\"></div><div class=\"dimmer dimmer-s\"></div><div class=\"dimmer dimmer-w\"></div></div></div><div class=sf-crop-elements><div class=\"handler handler-n\"></div><div class=\"handler handler-ne\"></div><div class=\"handler handler-e\"></div><div class=\"handler handler-se\"></div><div class=\"handler handler-s\"></div><div class=\"handler handler-sw\"></div><div class=\"handler handler-w\"></div><div class=\"handler handler-nw\"></div></div></div></div></div><div class=sf-crop-modal-header><div class=sf-crop-cropper-info><div class=sf-crop-ratio></div><div class=sf-crop-orig-size></div><div class=sf-crop-cropped-size></div></div></div><div class=sf-crop-modal-footer><div class=sf-image-adjustments><span class=sf-crop-flip-horizontally>horizontal</span> <span class=sf-crop-flip-vertically>vertical</span></div><button class=\"sf-crop-close btn\"></button> <button type=button class=\"btn sf-crop-save\"></button></div></div><div class=sf-crop-backdrop></div>";
 
 /***/ },
 /* 7 */
