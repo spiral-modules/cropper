@@ -150,9 +150,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-modal')[0],
 	        backdrop: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-backdrop')[0]
 	    };
+	    if ('ontouchstart' in window || navigator.MaxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) this.els.modal.classList.add('touch-device');
 	
 	    if (this.options.fileNameSelector) {
-	
 	        this.options.fileNameSelector.charAt(0) === " " ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector) : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector);
 	    }
 	
@@ -247,91 +247,91 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     *  How to send: cropped or full size with coordinates to crop on server <b>Default: "cropped"</b> <i>Optional: "full"</i>
 	     */
-	    "format": {
-	        "value": "cropped",
-	        "domAttr": "data-format"
+	    format: {
+	        value: "cropped",
+	        domAttr: "data-format"
 	    },
 	    /**
 	     *  Preloading of image  <b>Default: "false"</b> <i>Optional: url of image to preload</i>
 	     */
-	    "ajaximage": {
-	        "value": false,
-	        "domAttr": "data-ajax-image"
+	    ajaximage: {
+	        value: false,
+	        domAttr: "data-ajax-image"
 	    },
 	    /**
 	     *  Pass custom html template
 	     */
-	    "template": {
-	        "domAttr": "data-template"
+	    template: {
+	        domAttr: "data-template"
 	    },
 	    /**
 	     *  Request address for submitting (if there is no form) <b>Default: "false"</b> <i>Optional: request URL</i>
 	     */
-	    "ajaxAddress": {
-	        "value": false,
-	        "domAttr": "data-ajax-address"
+	    ajaxAddress: {
+	        value: false,
+	        domAttr: "data-ajax-address"
 	    },
 	    /**
 	     *  Locked aspect ratio <b>Default: false</b>
 	     */
-	    "ratio": {
-	        "value": false,
-	        "domAttr": "data-ratio"
+	    ratio: {
+	        value: false,
+	        domAttr: "data-ratio"
 	    },
 	    /**
 	     *  Node selector to place filename. If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
 	     */
-	    "fileNameSelector": {
-	        "domAttr": "data-filename-selector"
+	    fileNameSelector: {
+	        domAttr: "data-filename-selector"
 	    },
 	    /**
 	     *  What info to show <b>Default: []</b></br>
 	     *  <b>Example: </b>data-info="ratio,origSize,croppedSize"</br>
 	     */
-	    "info": {
-	        "value": [],
-	        "domAttr": "data-info"
+	    info: {
+	        value: [],
+	        domAttr: "data-info"
 	    },
 	    /**
 	     *  Selector of preview element <b>Default: ""</b>
 	     */
-	    "preview": {
-	        "value": "",
-	        "domAttr": "data-preview"
+	    preview: {
+	        value: "",
+	        domAttr: "data-preview"
 	    },
 	    /**
 	     *  Save button text <b>Default: "Save"</b>
 	     */
-	    "saveBtnText": {
-	        "value": "Save",
-	        "domAttr": "data-save-btn-text"
+	    saveBtnText: {
+	        value: "Save",
+	        domAttr: "data-save-btn-text"
 	    },
 	    /**
 	     *  Save button text <b>Default: "Close"</b>
 	     */
-	    "closeBtnText": {
-	        "value": "Close",
-	        "domAttr": "data-close-btn-text"
+	    closeBtnText: {
+	        value: "Close",
+	        domAttr: "data-close-btn-text"
 	    },
 	    /**
 	     *  Pass custom class to btns <b>Default: ""</b>
 	     */
-	    "customBtnClass": {
-	        "domAttr": "data-custom-btn-class"
+	    customBtnClass: {
+	        domAttr: "data-custom-btn-class"
 	    },
 	    /**
 	     *  Selector of element which triggers crop-modal <b>Default: ""</b>  If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
 	     */
-	    "adjust": {
-	        "value": "",
-	        "domAttr": "data-adjust"
+	    adjust: {
+	        value: "",
+	        domAttr: "data-adjust"
 	    },
 	    /**
 	     *  Name for formData <b>Default: "cropped"</b>
 	     */
-	    "name": {
-	        "value": "cropped",
-	        "domAttr": "data-name"
+	    name: {
+	        value: "cropped",
+	        domAttr: "data-name"
 	    }
 	};
 	Crop.prototype.reset = function () {
@@ -1320,7 +1320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".sf-crop-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:20px;background-color:#fff;overflow:auto;z-index:1000;width:auto;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;opacity:0;transition:opacity .3s ease;box-shadow:0 16px 28px 0 rgba(0,0,0,.22),0 25px 55px 0 rgba(0,0,0,.21)}.sf-crop-modal.visible{opacity:1;z-index:1001}.sf-crop-modal .sf-crop-modal-footer{padding-top:20px;text-align:right}.sf-crop-modal .btn{display:inline-block;margin:0 0 0 10px;border-width:0;border-radius:2px;box-shadow:0 0 1px rgba(0,0,0,.2);color:#4a4a4a;background:#fff;outline:none}.sf-crop-modal .btn:focus,.sf-crop-modal .btn:hover{background-color:#efefef}.sf-crop-modal .btn.sf-crop-save{box-shadow:0 0 1px rgba(0,0,0,.6)}.sf-crop-modal .btn.sf-crop-close{color:#8a8a8a}.sf-crop-modal .sf-crop-container{position:relative}.sf-crop-modal .sf-crop-container canvas{display:block}.sf-crop-modal .sf-crop-wrapper{position:absolute;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .sf-crop-elements{position:absolute;border:1px dashed #000;top:0;width:100%;height:100%;max-width:100%;max-height:100%;cursor:move}.sf-crop-modal .sf-crop-wrapper .sf-crop-dimmers-container{position:absolute;overflow:hidden;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .dimmers{position:absolute}.sf-crop-modal .sf-crop-wrapper .dimmer{position:absolute;width:1000px;height:1000px;background-color:#000;opacity:.3}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-n{bottom:100%;left:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-e{left:100%;top:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-s{top:100%;right:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-w{bottom:0;right:100%}.sf-crop-modal .sf-crop-wrapper .handler{position:absolute;border:1px solid #333;width:10px;height:10px;background:#fff;opacity:.5}.sf-crop-modal .sf-crop-wrapper .handler.handler-n{top:0;left:50%;margin-top:-6px;margin-left:-6px;cursor:n-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-ne{top:0;right:0;margin-top:-6px;margin-right:-6px;cursor:ne-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-e{top:50%;right:0;margin-top:-6px;margin-right:-6px;cursor:e-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-se{bottom:0;right:0;margin-bottom:-6px;margin-right:-6px;cursor:se-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-s{bottom:0;left:50%;margin-bottom:-6px;margin-left:-6px;cursor:s-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-sw{bottom:0;left:0;margin-bottom:-6px;margin-left:-6px;cursor:sw-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-w{top:50%;left:0;margin-top:-6px;margin-left:-6px;cursor:w-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-nw{top:0;left:0;margin-top:-6px;margin-left:-6px;cursor:nw-resize}.sf-crop-modal .sf-crop-modal-header .sf-crop-cropper-info{font-size:12px}.sf-crop-modal .sf-crop-modal-header .sf-crop-close{position:absolute;background:transparent;padding:0;top:10px;right:15px;font-size:24px;border:none;opacity:.2;cursor:pointer}.sf-crop-modal .sf-crop-modal-header .sf-crop-close:hover{opacity:1}.sf-crop-backdrop{top:0;left:0;position:fixed;background-color:#000;width:100vw;height:100vh;opacity:0;transition:opacity .3s ease}.sf-crop-backdrop.visible{opacity:.4;z-index:1000}", ""]);
+	exports.push([module.id, ".sf-crop-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:20px;background-color:#fff;overflow:auto;z-index:1000;width:auto;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;opacity:0;transition:opacity .3s ease;box-shadow:0 16px 28px 0 rgba(0,0,0,.22),0 25px 55px 0 rgba(0,0,0,.21)}.sf-crop-modal.touch-device .handler:before{content:'';width:30px;height:30px;display:block;left:50%;top:50%;position:relative;transform:translate(-50%,-50%)}.sf-crop-modal.visible{opacity:1;z-index:1001}.sf-crop-modal .sf-crop-modal-footer{padding-top:20px;text-align:right}.sf-crop-modal .btn{display:inline-block;margin:0 0 0 10px;border-width:0;border-radius:2px;box-shadow:0 0 1px rgba(0,0,0,.2);color:#4a4a4a;background:#fff;outline:none}.sf-crop-modal .btn:focus,.sf-crop-modal .btn:hover{background-color:#efefef}.sf-crop-modal .btn.sf-crop-save{box-shadow:0 0 1px rgba(0,0,0,.6)}.sf-crop-modal .btn.sf-crop-close{color:#8a8a8a}.sf-crop-modal .sf-crop-container{position:relative}.sf-crop-modal .sf-crop-container canvas{display:block}.sf-crop-modal .sf-crop-wrapper{position:absolute;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .sf-crop-elements{position:absolute;border:1px dashed #000;top:0;width:100%;height:100%;max-width:100%;max-height:100%;cursor:move}.sf-crop-modal .sf-crop-wrapper .sf-crop-dimmers-container{position:absolute;overflow:hidden;top:0;bottom:0;left:0;right:0}.sf-crop-modal .sf-crop-wrapper .dimmers{position:absolute}.sf-crop-modal .sf-crop-wrapper .dimmer{position:absolute;width:1000px;height:1000px;background-color:#000;opacity:.3}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-n{bottom:100%;left:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-e{left:100%;top:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-s{top:100%;right:0}.sf-crop-modal .sf-crop-wrapper .dimmer.dimmer-w{bottom:0;right:100%}.sf-crop-modal .sf-crop-wrapper .handler{position:absolute;border:1px solid #333;width:10px;height:10px;background:#fff;opacity:.5}.sf-crop-modal .sf-crop-wrapper .handler.handler-n{top:0;left:50%;margin-top:-6px;margin-left:-6px;cursor:n-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-ne{top:0;right:0;margin-top:-6px;margin-right:-6px;cursor:ne-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-e{top:50%;right:0;margin-top:-6px;margin-right:-6px;cursor:e-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-se{bottom:0;right:0;margin-bottom:-6px;margin-right:-6px;cursor:se-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-s{bottom:0;left:50%;margin-bottom:-6px;margin-left:-6px;cursor:s-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-sw{bottom:0;left:0;margin-bottom:-6px;margin-left:-6px;cursor:sw-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-w{top:50%;left:0;margin-top:-6px;margin-left:-6px;cursor:w-resize}.sf-crop-modal .sf-crop-wrapper .handler.handler-nw{top:0;left:0;margin-top:-6px;margin-left:-6px;cursor:nw-resize}.sf-crop-modal .sf-crop-modal-header .sf-crop-cropper-info{font-size:12px}.sf-crop-modal .sf-crop-modal-header .sf-crop-close{position:absolute;background:transparent;padding:0;top:10px;right:15px;font-size:24px;border:none;opacity:.2;cursor:pointer}.sf-crop-modal .sf-crop-modal-header .sf-crop-close:hover{opacity:1}.sf-crop-backdrop{top:0;left:0;position:fixed;background-color:#000;width:100vw;height:100vh;opacity:0;transition:opacity .3s ease}.sf-crop-backdrop.visible{opacity:.4;z-index:1000}", ""]);
 	
 	// exports
 

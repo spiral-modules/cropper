@@ -50,9 +50,9 @@ Crop.prototype._construct = function (sf, node, options) {
         modal: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-modal')[0],
         backdrop: parser.parseFromString(this.options.template, "text/html").firstChild.lastChild.getElementsByClassName('sf-crop-backdrop')[0]
     };
+    if (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) this.els.modal.classList.add('touch-device');
 
     if (this.options.fileNameSelector) {
-
         this.options.fileNameSelector.charAt(0) === " "
             ? this.els.filenameContainer = document.querySelector(this.options.fileNameSelector)
             : this.els.filenameContainer = (node.tagName === "INPUT" ? node.parentNode : node).querySelector(this.options.fileNameSelector);
@@ -151,91 +151,91 @@ Crop.prototype.optionsToGrab  = {
     /**
      *  How to send: cropped or full size with coordinates to crop on server <b>Default: "cropped"</b> <i>Optional: "full"</i>
      */
-    "format": {
-        "value": "cropped",
-        "domAttr": "data-format"
+    format: {
+        value: "cropped",
+        domAttr: "data-format"
     },
     /**
      *  Preloading of image  <b>Default: "false"</b> <i>Optional: url of image to preload</i>
      */
-    "ajaximage": {
-        "value": false,
-        "domAttr": "data-ajax-image"
+    ajaximage: {
+        value: false,
+        domAttr: "data-ajax-image"
     },
     /**
      *  Pass custom html template
      */
-    "template": {
-        "domAttr": "data-template"
+    template: {
+        domAttr: "data-template"
     },
     /**
      *  Request address for submitting (if there is no form) <b>Default: "false"</b> <i>Optional: request URL</i>
      */
-    "ajaxAddress": {
-        "value": false,
-        "domAttr": "data-ajax-address"
+    ajaxAddress: {
+        value: false,
+        domAttr: "data-ajax-address"
     },
     /**
      *  Locked aspect ratio <b>Default: false</b>
      */
-    "ratio": {
-        "value": false,
-        "domAttr": "data-ratio"
+    ratio: {
+        value: false,
+        domAttr: "data-ratio"
     },
     /**
      *  Node selector to place filename. If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
      */
-    "fileNameSelector": {
-        "domAttr": "data-filename-selector"
+    fileNameSelector: {
+        domAttr: "data-filename-selector"
     },
     /**
      *  What info to show <b>Default: []</b></br>
      *  <b>Example: </b>data-info="ratio,origSize,croppedSize"</br>
      */
-    "info": {
-        "value": [],
-        "domAttr": "data-info"
+    info: {
+        value: [],
+        domAttr: "data-info"
     },
     /**
      *  Selector of preview element <b>Default: ""</b>
      */
-    "preview": {
-        "value": "",
-        "domAttr": "data-preview"
+    preview: {
+        value: "",
+        domAttr: "data-preview"
     },
     /**
      *  Save button text <b>Default: "Save"</b>
      */
-    "saveBtnText": {
-        "value": "Save",
-        "domAttr": "data-save-btn-text"
+    saveBtnText: {
+        value: "Save",
+        domAttr: "data-save-btn-text"
     },
     /**
      *  Save button text <b>Default: "Close"</b>
      */
-    "closeBtnText": {
-        "value": "Close",
-        "domAttr": "data-close-btn-text"
+    closeBtnText: {
+        value: "Close",
+        domAttr: "data-close-btn-text"
     },
     /**
      *  Pass custom class to btns <b>Default: ""</b>
      */
-    "customBtnClass": {
-        "domAttr": "data-custom-btn-class"
+    customBtnClass: {
+        domAttr: "data-custom-btn-class"
     },
     /**
      *  Selector of element which triggers crop-modal <b>Default: ""</b>  If starts with space - global search of node (document) otherwise inside the node (if the node is input, then from parent node)
      */
-    "adjust": {
-        "value": "",
-        "domAttr": "data-adjust"
+    adjust: {
+        value: "",
+        domAttr: "data-adjust"
     },
     /**
      *  Name for formData <b>Default: "cropped"</b>
      */
-    "name": {
-        "value": "cropped",
-        "domAttr": "data-name"
+    name: {
+        value: "cropped",
+        domAttr: "data-name"
     }
 };
 Crop.prototype.reset = function () {
