@@ -2,7 +2,7 @@
 
 <block:resources>
     <resource:script href="resources/scripts/spiral/sf.js"/>
-    <resource:script href="resources/scripts/spiral/sf.crop.js"/>
+    <resource:script href="resources/scripts/spiral/sf.crop.min.js"/>
 </block:resources>
 
 <block:body>

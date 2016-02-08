@@ -63,17 +63,6 @@ Cropper preview:
 `composer update spiral/cropper`  
 `spiral publish spiral/cropper`
 
-## Local Development
-
-### Installation
-
-    npm install -g gulp
-    npm install
-
-### Building
-
-    gulp build
-    
 
 ## License
 
