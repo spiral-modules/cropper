@@ -1,8 +1,8 @@
 <extends:spiral:element/>
 
 <block:resources>
-    <resource:script href="/resources/scripts/spiral/sf.js"/>
-    <resource:script href="/resources/scripts/spiral/sf.crop.min.js"/>
+    <resource:script href="resources/scripts/spiral/sf.js"/>
+    <resource:script href="resources/scripts/spiral/sf.crop.min.js"/>
 </block:resources>
 
 <block:body>
